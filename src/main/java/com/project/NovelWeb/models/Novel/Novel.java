@@ -1,17 +1,17 @@
-package com.project.NovelWeb.models.Story;
+package com.project.NovelWeb.models.Novel;
 
 import com.project.NovelWeb.models.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "stories")
+@Table(name = "novels")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Story extends BaseEntity {
+public class Novel extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
