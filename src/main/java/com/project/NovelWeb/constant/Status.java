@@ -1,4 +1,4 @@
-package com.project.NovelWeb.enums;
+package com.project.NovelWeb.constant;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

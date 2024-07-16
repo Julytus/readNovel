@@ -2,7 +2,7 @@ package com.project.NovelWeb.models.dto.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.project.NovelWeb.models.entity.Novel.Category;
+import com.project.NovelWeb.models.entity.Novel.ContentType;
 import lombok.*;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CategoryResponse {
+public class ContentTypeResponse {
     @JsonProperty("message")
     private String message;
 
@@ -20,6 +20,6 @@ public class CategoryResponse {
     private List<String> errors;
 
     @JsonProperty("category")
-    private Category category;
+    private ContentType category;
 }
 
