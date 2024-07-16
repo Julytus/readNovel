@@ -1,7 +1,7 @@
 package com.project.NovelWeb.services;
 
-import com.project.NovelWeb.models.dtos.requests.CategoryRequest;
-import com.project.NovelWeb.models.Novel.Category;
+import com.project.NovelWeb.models.dto.requests.CategoryRequest;
+import com.project.NovelWeb.models.entity.Novel.Category;
 import org.springframework.data.crossstore.ChangeSetPersister;
 
 import java.util.List;

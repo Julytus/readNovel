@@ -1,8 +1,8 @@
 package com.project.NovelWeb.controllers;
 
-import com.project.NovelWeb.models.dtos.requests.CategoryRequest;
-import com.project.NovelWeb.models.Novel.Category;
-import com.project.NovelWeb.models.dtos.responses.CategoryResponse;
+import com.project.NovelWeb.models.dto.requests.CategoryRequest;
+import com.project.NovelWeb.models.entity.Novel.Category;
+import com.project.NovelWeb.models.dto.responses.CategoryResponse;
 import com.project.NovelWeb.services.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

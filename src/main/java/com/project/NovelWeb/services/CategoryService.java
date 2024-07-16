@@ -1,8 +1,8 @@
 package com.project.NovelWeb.services;
 
-import com.project.NovelWeb.models.dtos.requests.CategoryRequest;
-import com.project.NovelWeb.models.Novel.Category;
-import com.project.NovelWeb.models.Novel.Novel;
+import com.project.NovelWeb.models.dto.requests.CategoryRequest;
+import com.project.NovelWeb.models.entity.Novel.Category;
+import com.project.NovelWeb.models.entity.Novel.Novel;
 import com.project.NovelWeb.repositories.CategoryRepository;
 import com.project.NovelWeb.repositories.NovelRepository;
 import lombok.RequiredArgsConstructor;

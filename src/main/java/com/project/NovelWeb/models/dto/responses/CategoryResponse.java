@@ -1,8 +1,8 @@
-package com.project.NovelWeb.models.dtos.responses;
+package com.project.NovelWeb.models.dto.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.project.NovelWeb.models.Novel.Category;
+import com.project.NovelWeb.models.entity.Novel.Category;
 import lombok.*;
 
 import java.util.List;
