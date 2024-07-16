@@ -5,7 +5,7 @@ import com.project.NovelWeb.models.entity.Novel.ContentType;
 import com.project.NovelWeb.models.entity.Novel.Novel;
 import com.project.NovelWeb.repositories.ContentTypeRepository;
 import com.project.NovelWeb.repositories.NovelRepository;
-import com.project.NovelWeb.services.CategoryService;
+import com.project.NovelWeb.services.ContentTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
@@ -15,50 +15,48 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryServiceImp implements CategoryService {
+public class ContentTypeServiceImp implements ContentTypeService {
     private final ContentTypeRepository contentTypeRepository;
     private final NovelRepository novelRepository;
     @Override
-    public ContentType createCategory(ContentTypeRequest contentTypeRequest) {
-        ContentType category = ContentType.builder()
+    public ContentType createContentType(ContentTypeRequest contentTypeRequest) {
+        ContentType contentType = ContentType.builder()
                 .name(contentTypeRequest.getName())
                 .build();
-        return contentTypeRepository.save(category);
+        return contentTypeRepository.save(contentType);
     }
 
     @Override
-    public ContentType getCategoryById(Long id) {
+    public ContentType getContentTypeById(Long id) {
         return contentTypeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("CATEGORY NOT FOUND!"));
+                .orElseThrow(() -> new RuntimeException("ContentType NOT FOUND!"));
     }
 
     @Override
-    public List<ContentType> getAllCategories() {
+    public List<ContentType> getAllContentTypes() {
         return contentTypeRepository.findAll();
     }
 
     @Override
     @Transactional
-    public ContentType updateCategory(ContentTypeRequest contentTypeRequest,
-                                      Long id) {
-        ContentType existingCategory = getCategoryById(id);
-        existingCategory.setName(contentTypeRequest.getName());
-        contentTypeRepository.save(existingCategory);
-        return existingCategory;
+    public void updateContentType(ContentTypeRequest contentTypeRequest,
+                                  Long id) {
+        ContentType existingContentType = getContentTypeById(id);
+        existingContentType.setName(contentTypeRequest.getName());
+        contentTypeRepository.save(existingContentType);
     }
 
     @Override
     @Transactional
-    public ContentType deleteCategory(Long id) throws ChangeSetPersister.NotFoundException {
-        ContentType existingCategory = contentTypeRepository.findById(id)
+    public void deleteContentType(Long id) throws ChangeSetPersister.NotFoundException {
+        ContentType contentType = contentTypeRepository.findById(id)
                 .orElseThrow(ChangeSetPersister.NotFoundException::new);
 
-        List<Novel> novels = novelRepository.findByCategory(existingCategory);
+        List<Novel> novels = novelRepository.findByContentType(contentType);
         if (!novels.isEmpty()) {
-            throw new IllegalStateException("Cannot delete category with associated novels");
+            throw new IllegalStateException("Cannot delete ContentType with associated novels");
         } else {
             contentTypeRepository.deleteById(id);
-            return existingCategory;
         }
     }
 }

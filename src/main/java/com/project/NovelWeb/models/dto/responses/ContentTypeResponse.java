@@ -19,7 +19,7 @@ public class ContentTypeResponse {
     @JsonProperty("errors")
     private List<String> errors;
 
-    @JsonProperty("category")
-    private ContentType category;
+    @JsonProperty("content_type")
+    private ContentType contentType;
 }
 
