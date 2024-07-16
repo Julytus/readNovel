@@ -5,6 +5,9 @@ import com.project.NovelWeb.models.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "novels")
 @Getter
@@ -35,9 +38,13 @@ public class Novel extends BaseEntity {
     @Column(name = "image")
     private String image;
 
-    @ManyToOne
-    @JoinColumn(name = "content_type_id")
-    private ContentType contentType;
+    @ManyToMany
+    @JoinTable(
+            name = "content_types",
+            joinColumns = @JoinColumn(name = "novel_id"),
+            inverseJoinColumns = @JoinColumn(name = "id")
+    )
+    private Set<ContentType> contentTypes = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "poster_id")

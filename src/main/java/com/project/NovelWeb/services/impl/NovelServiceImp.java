@@ -8,13 +8,19 @@ import com.project.NovelWeb.models.entity.User;
 import com.project.NovelWeb.repositories.ContentTypeRepository;
 import com.project.NovelWeb.repositories.NovelRepository;
 import com.project.NovelWeb.repositories.UserRepository;
+import com.project.NovelWeb.responses.NovelResponse;
 import com.project.NovelWeb.services.NovelService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class NovelServiceImp implements NovelService {
@@ -24,12 +30,22 @@ public class NovelServiceImp implements NovelService {
 
     @Override
     @Transactional
-    public Novel createNovel(NovelDTO novelDTO) throws Exception{
-        ContentType existingContentType = contentTypeRepository
-                .findById(novelDTO.getContentTypeId())
-                .orElseThrow(() ->
-                        new DataNotFoundException(
-                                "Cannot find ContentType with id:" + novelDTO.getContentTypeId()));
+    public NovelResponse createNovel(NovelDTO novelDTO) throws Exception{
+
+        //Get List ContentType for Novel
+
+        Set<ContentType> contentTypes = novelDTO.getContentTypeId().stream()
+                .map(id -> {
+                    try {
+                        return contentTypeRepository.findById(id)
+                                .orElseThrow(() -> new DataNotFoundException("Cannot find ContentType with id: " + id));
+                    } catch (DataNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toSet());
+
+        // Check Poster
 
         User existingUser = userRepository
                 .findById(novelDTO.getPosterId())
@@ -42,15 +58,20 @@ public class NovelServiceImp implements NovelService {
                 .alias(novelDTO.getAlias())
                 .content(novelDTO.getContent())
                 .image(novelDTO.getImage())
-                .contentType(existingContentType)
+                .contentTypes(contentTypes)
                 .poster(existingUser)
                 .build();
-        return novelRepository.save(newNovel);
+        novelRepository.save(newNovel);
+        return NovelResponse.fromNovelDTO(novelDTO);
     }
 
     @Override
-    public List<Novel> getAllNovels() {
-        return novelRepository.findAll();
+    public Page<NovelResponse> getAllNovels(String keyword,
+                                            Long contentTypeId,
+                                            PageRequest pageRequest)
+    {
+        Page<Novel> novelPage = novelRepository.searchNovels(contentTypeId, keyword, pageRequest);
+        return novelPage.map(NovelResponse::fromNovel);
     }
 
     @Override
