@@ -1,4 +1,4 @@
-package com.project.NovelWeb.dtos;
+package com.project.NovelWeb.models.dto.requests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class CategoryDTO {
+public class CategoryRequest {
     @NotEmpty(message = "Category's name cannot be empty!")
     @JsonProperty("name")
     private String name;

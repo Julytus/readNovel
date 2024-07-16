@@ -1,8 +1,8 @@
 package com.project.NovelWeb.services;
 
-import com.project.NovelWeb.dtos.CategoryDTO;
-import com.project.NovelWeb.models.Novel.Category;
-import com.project.NovelWeb.models.Novel.Novel;
+import com.project.NovelWeb.models.dto.requests.CategoryRequest;
+import com.project.NovelWeb.models.entity.Novel.Category;
+import com.project.NovelWeb.models.entity.Novel.Novel;
 import com.project.NovelWeb.repositories.CategoryRepository;
 import com.project.NovelWeb.repositories.NovelRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +18,9 @@ public class CategoryService implements ICategoryService{
     private final CategoryRepository categoryRepository;
     private final NovelRepository novelRepository;
     @Override
-    public Category createCategory(CategoryDTO categoryDTO) {
+    public Category createCategory(CategoryRequest categoryRequest) {
         Category category = Category.builder()
-                .name(categoryDTO.getName())
+                .name(categoryRequest.getName())
                 .build();
         return categoryRepository.save(category);
     }
@@ -38,10 +38,10 @@ public class CategoryService implements ICategoryService{
 
     @Override
     @Transactional
-    public Category updateCategory(CategoryDTO categoryDTO,
+    public Category updateCategory(CategoryRequest categoryRequest,
                                    Long id) {
         Category existingCategory = getCategoryById(id);
-        existingCategory.setName(categoryDTO.getName());
+        existingCategory.setName(categoryRequest.getName());
         categoryRepository.save(existingCategory);
         return existingCategory;
     }

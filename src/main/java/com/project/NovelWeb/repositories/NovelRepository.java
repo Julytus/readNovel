@@ -1,7 +1,7 @@
 package com.project.NovelWeb.repositories;
 
-import com.project.NovelWeb.models.Novel.Category;
-import com.project.NovelWeb.models.Novel.Novel;
+import com.project.NovelWeb.models.entity.Novel.Category;
+import com.project.NovelWeb.models.entity.Novel.Novel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

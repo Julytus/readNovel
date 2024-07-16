@@ -1,6 +1,6 @@
 package com.project.NovelWeb.repositories;
 
-import com.project.NovelWeb.models.Novel.Category;
+import com.project.NovelWeb.models.entity.Novel.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
