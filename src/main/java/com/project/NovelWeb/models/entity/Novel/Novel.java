@@ -1,5 +1,6 @@
 package com.project.NovelWeb.models.entity.Novel;
 
+import com.project.NovelWeb.enums.Status;
 import com.project.NovelWeb.models.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,7 +30,7 @@ public class Novel extends BaseEntity {
     private Long view;
 
     @Column(name = "status")
-    private String status;
+    private Status status;
 
     @Column(name = "image")
     private String image;
