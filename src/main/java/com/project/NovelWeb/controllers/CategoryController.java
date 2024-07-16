@@ -3,7 +3,7 @@ package com.project.NovelWeb.controllers;
 import com.project.NovelWeb.models.dto.requests.CategoryRequest;
 import com.project.NovelWeb.models.entity.Novel.Category;
 import com.project.NovelWeb.models.dto.responses.CategoryResponse;
-import com.project.NovelWeb.services.CategoryService;
+import com.project.NovelWeb.services.impl.CategoryServiceImp;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("${api.prefix}/categories")
 public class CategoryController {
-    private final CategoryService categoryService;
+    private final CategoryServiceImp categoryServiceImp;
 
     @PostMapping
     public ResponseEntity<CategoryResponse> createCategory(
@@ -38,7 +38,7 @@ public class CategoryController {
             categoryResponse.setErrors(errorMessages);
             return ResponseEntity.badRequest().body(categoryResponse);
         }
-        Category category = categoryService.createCategory(categoryRequest);
+        Category category = categoryServiceImp.createCategory(categoryRequest);
         categoryResponse.setCategory(category);
         return ResponseEntity.ok(categoryResponse);
     }
