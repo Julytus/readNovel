@@ -1,8 +1,8 @@
 package com.project.NovelWeb.controllers;
 
-import com.project.NovelWeb.dtos.CategoryDTO;
+import com.project.NovelWeb.models.dtos.requests.CategoryRequest;
 import com.project.NovelWeb.models.Novel.Category;
-import com.project.NovelWeb.responses.CategoryResponse;
+import com.project.NovelWeb.models.dtos.responses.CategoryResponse;
 import com.project.NovelWeb.services.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryResponse> createCategory(
-            @Valid @RequestBody CategoryDTO categoryDTO,
+            @Valid @RequestBody CategoryRequest categoryRequest,
             BindingResult bindingResult) {
         CategoryResponse categoryResponse = new CategoryResponse();
         if (bindingResult.hasErrors()) {
@@ -38,7 +38,7 @@ public class CategoryController {
             categoryResponse.setErrors(errorMessages);
             return ResponseEntity.badRequest().body(categoryResponse);
         }
-        Category category = categoryService.createCategory(categoryDTO);
+        Category category = categoryService.createCategory(categoryRequest);
         categoryResponse.setCategory(category);
         return ResponseEntity.ok(categoryResponse);
     }

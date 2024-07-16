@@ -1,4 +1,4 @@
-package com.project.NovelWeb.dtos;
+package com.project.NovelWeb.models.dtos.requests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
@@ -10,7 +10,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class UserRequest {
     @JsonProperty("full_name")
     private String fullName;
 

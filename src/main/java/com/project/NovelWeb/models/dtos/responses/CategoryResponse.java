@@ -1,4 +1,4 @@
-package com.project.NovelWeb.responses;
+package com.project.NovelWeb.models.dtos.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
