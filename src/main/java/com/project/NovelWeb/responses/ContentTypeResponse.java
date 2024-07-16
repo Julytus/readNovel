@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ContentTypeResponse {
+public class ContentTypeResponse extends BaseResponse{
     @JsonProperty("message")
     private String message;
 
