@@ -1,6 +1,6 @@
 package com.project.NovelWeb.services.impl;
 
-import com.project.NovelWeb.models.dto.requests.ContentTypeRequest;
+import com.project.NovelWeb.dtos.ContentTypeDTO;
 import com.project.NovelWeb.models.entity.Novel.ContentType;
 import com.project.NovelWeb.models.entity.Novel.Novel;
 import com.project.NovelWeb.repositories.ContentTypeRepository;
@@ -19,9 +19,9 @@ public class ContentTypeServiceImp implements ContentTypeService {
     private final ContentTypeRepository contentTypeRepository;
     private final NovelRepository novelRepository;
     @Override
-    public ContentType createContentType(ContentTypeRequest contentTypeRequest) {
+    public ContentType createContentType(ContentTypeDTO contentTypeDTO) {
         ContentType contentType = ContentType.builder()
-                .name(contentTypeRequest.getName())
+                .name(contentTypeDTO.getName())
                 .build();
         return contentTypeRepository.save(contentType);
     }
@@ -39,10 +39,10 @@ public class ContentTypeServiceImp implements ContentTypeService {
 
     @Override
     @Transactional
-    public void updateContentType(ContentTypeRequest contentTypeRequest,
+    public void updateContentType(ContentTypeDTO contentTypeDTO,
                                   Long id) {
         ContentType existingContentType = getContentTypeById(id);
-        existingContentType.setName(contentTypeRequest.getName());
+        existingContentType.setName(contentTypeDTO.getName());
         contentTypeRepository.save(existingContentType);
     }
 
