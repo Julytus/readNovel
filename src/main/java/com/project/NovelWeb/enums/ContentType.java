@@ -1,14 +1,13 @@
 package com.project.NovelWeb.enums;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
-
+@RequiredArgsConstructor
 public enum ContentType {
     UNKNOWN(0),
 
