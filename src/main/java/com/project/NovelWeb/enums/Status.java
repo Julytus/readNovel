@@ -1,9 +1,8 @@
 package com.project.NovelWeb.enums;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
+
 @Getter
 
 public enum Status {
@@ -23,5 +22,7 @@ public enum Status {
     MAGAZINE(13);
 
     private final int id;
-
+    Status(int id) {
+        this.id = id;
+    }
 }

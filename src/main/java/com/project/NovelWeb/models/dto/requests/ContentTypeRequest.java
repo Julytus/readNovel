@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 
 public class ContentTypeRequest {
-    @NotEmpty(message = "Category's name cannot be empty!")
+    @NotEmpty(message = "Name cannot be empty!")
     @JsonProperty("name")
     private String name;
 }

@@ -4,7 +4,7 @@ import com.project.NovelWeb.models.dto.requests.ContentTypeRequest;
 import com.project.NovelWeb.models.dto.responses.ResponseObject;
 import com.project.NovelWeb.models.entity.Novel.ContentType;
 import com.project.NovelWeb.models.dto.responses.ContentTypeResponse;
-import com.project.NovelWeb.services.impl.CategoryServiceImp;
+import com.project.NovelWeb.services.impl.ContentTypeServiceImp;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -18,12 +18,12 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${api.prefix}/categories")
-public class CategoryController {
-    private final CategoryServiceImp categoryServiceImp;
+@RequestMapping("${api.prefix}/contentType")
+public class ContentTypeController {
+    private final ContentTypeServiceImp contentTypeServiceImp;
 
     @PostMapping("")
-    public ResponseEntity<ContentTypeResponse> createCategory(
+    public ResponseEntity<ContentTypeResponse> createContentType(
             @Valid @RequestBody ContentTypeRequest contentTypeRequest,
             BindingResult bindingResult) {
         ContentTypeResponse contentTypeResponse = new ContentTypeResponse();
@@ -32,20 +32,20 @@ public class CategoryController {
                     .stream()
                     .map(FieldError::getDefaultMessage)
                     .toList();
-            contentTypeResponse.setMessage("INSERT_CATEGORY_FAILED");
+            contentTypeResponse.setMessage("INSERT_ContentType_FAILED");
             contentTypeResponse.setErrors(errorMessages);
             return ResponseEntity.badRequest().body(contentTypeResponse);
         }
-        ContentType category = categoryServiceImp.createCategory(contentTypeRequest);
-        contentTypeResponse.setCategory(category);
+        ContentType contentType = contentTypeServiceImp.createContentType(contentTypeRequest);
+        contentTypeResponse.setContentType(contentType);
         return ResponseEntity.ok(contentTypeResponse);
     }
 
     @GetMapping("")
-    public ResponseEntity<ResponseObject> getAllCategories(
+    public ResponseEntity<ResponseObject> getAllContentType(
             @RequestParam("page")   int page,
             @RequestParam("limit")   int limit) {
-        List<ContentType> categoryList = categoryServiceImp.getAllCategories();
+        List<ContentType> categoryList = contentTypeServiceImp.getAllContentTypes();
         return ResponseEntity.ok(ResponseObject.builder()
                         .message("Get list of Categories successfully.")
                         .data(categoryList)
@@ -53,9 +53,9 @@ public class CategoryController {
                         .build());
     }
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseObject> getCategoryById(
+    public ResponseEntity<ResponseObject> getContentTypeById(
             @PathVariable("id") Long id) {
-    ContentType category = categoryServiceImp.getCategoryById(id);
+    ContentType category = contentTypeServiceImp.getContentTypeById(id);
     return ResponseEntity.ok(ResponseObject.builder()
             .status(HttpStatus.OK)
             .message("Get category information successfully.")
@@ -64,22 +64,22 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseObject> updateCategory(
+    public ResponseEntity<ResponseObject> updateContentType(
             @PathVariable("id") Long id,
             @Valid @RequestBody ContentTypeRequest contentTypeRequest
     ) {
-        categoryServiceImp.updateCategory(contentTypeRequest, id);
+        contentTypeServiceImp.updateContentType(contentTypeRequest, id);
         return ResponseEntity.ok(ResponseObject.builder()
                         .message("UPDATE_CATEGORY_SUCCESSFULLY.")
-                        .data(categoryServiceImp.getCategoryById(id))
+                        .data(contentTypeServiceImp.getContentTypeById(id))
                         .build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseObject> deleteCategory(
+    public ResponseEntity<ResponseObject> deleteContentType(
             @PathVariable("id") long id
     ) throws ChangeSetPersister.NotFoundException {
-        categoryServiceImp.deleteCategory(id);
+        contentTypeServiceImp.deleteContentType(id);
         return ResponseEntity.ok(ResponseObject
                         .builder()
                         .status(HttpStatus.OK)

@@ -37,7 +37,7 @@ public class Novel extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "content_type_id")
-    private ContentType category;
+    private ContentType contentType;
 
     @ManyToOne
     @JoinColumn(name = "poster_id")
