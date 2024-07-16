@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class CategoryRequest {
+public class ContentTypeRequest {
     @NotEmpty(message = "Category's name cannot be empty!")
     @JsonProperty("name")
     private String name;

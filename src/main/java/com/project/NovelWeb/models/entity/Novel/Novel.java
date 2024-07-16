@@ -1,7 +1,7 @@
 package com.project.NovelWeb.models.entity.Novel;
 
-import com.project.NovelWeb.enums.Status;
 import com.project.NovelWeb.models.entity.BaseEntity;
+import com.project.NovelWeb.models.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,12 +30,16 @@ public class Novel extends BaseEntity {
     private Long view;
 
     @Column(name = "status")
-    private Status status;
+    private String status;
 
     @Column(name = "image")
     private String image;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @JoinColumn(name = "content_type_id")
+    private ContentType category;
+
+    @ManyToOne
+    @JoinColumn(name = "poster_id")
+    private User poster;
 }
