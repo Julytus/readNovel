@@ -1,6 +1,6 @@
 package com.project.NovelWeb.services;
 
-import com.project.NovelWeb.models.dto.requests.NovelRequest;
+import com.project.NovelWeb.dtos.NovelDTO;
 import com.project.NovelWeb.models.entity.Novel.Novel;
 import org.springframework.data.domain.Pageable;
 
@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface NovelService {
-    Novel createNovel(NovelRequest novelRequest) throws Exception;
+    Novel createNovel(NovelDTO novelDTO) throws Exception;
     List<Novel> getAllNovels();
     Novel findByName(String name);
     List<Novel> getNovels(Pageable pageable);

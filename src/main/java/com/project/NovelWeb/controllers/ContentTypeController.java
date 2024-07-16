@@ -1,9 +1,9 @@
 package com.project.NovelWeb.controllers;
 
-import com.project.NovelWeb.models.dto.requests.ContentTypeRequest;
-import com.project.NovelWeb.models.dto.responses.ResponseObject;
+import com.project.NovelWeb.dtos.ContentTypeDTO;
+import com.project.NovelWeb.responses.ResponseObject;
 import com.project.NovelWeb.models.entity.Novel.ContentType;
-import com.project.NovelWeb.models.dto.responses.ContentTypeResponse;
+import com.project.NovelWeb.responses.ContentTypeResponse;
 import com.project.NovelWeb.services.impl.ContentTypeServiceImp;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class ContentTypeController {
 
     @PostMapping("")
     public ResponseEntity<ContentTypeResponse> createContentType(
-            @Valid @RequestBody ContentTypeRequest contentTypeRequest,
+            @Valid @RequestBody ContentTypeDTO contentTypeDTO,
             BindingResult bindingResult) {
         ContentTypeResponse contentTypeResponse = new ContentTypeResponse();
         if (bindingResult.hasErrors()) {
@@ -36,7 +36,7 @@ public class ContentTypeController {
             contentTypeResponse.setErrors(errorMessages);
             return ResponseEntity.badRequest().body(contentTypeResponse);
         }
-        ContentType contentType = contentTypeServiceImp.createContentType(contentTypeRequest);
+        ContentType contentType = contentTypeServiceImp.createContentType(contentTypeDTO);
         contentTypeResponse.setContentType(contentType);
         return ResponseEntity.ok(contentTypeResponse);
     }
@@ -66,9 +66,9 @@ public class ContentTypeController {
     @PutMapping("/{id}")
     public ResponseEntity<ResponseObject> updateContentType(
             @PathVariable("id") Long id,
-            @Valid @RequestBody ContentTypeRequest contentTypeRequest
+            @Valid @RequestBody ContentTypeDTO contentTypeDTO
     ) {
-        contentTypeServiceImp.updateContentType(contentTypeRequest, id);
+        contentTypeServiceImp.updateContentType(contentTypeDTO, id);
         return ResponseEntity.ok(ResponseObject.builder()
                         .message("UPDATE_CATEGORY_SUCCESSFULLY.")
                         .data(contentTypeServiceImp.getContentTypeById(id))

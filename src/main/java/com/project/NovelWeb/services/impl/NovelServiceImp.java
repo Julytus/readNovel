@@ -1,7 +1,7 @@
 package com.project.NovelWeb.services.impl;
 
 import com.project.NovelWeb.exceptions.DataNotFoundException;
-import com.project.NovelWeb.models.dto.requests.NovelRequest;
+import com.project.NovelWeb.dtos.NovelDTO;
 import com.project.NovelWeb.models.entity.Novel.ContentType;
 import com.project.NovelWeb.models.entity.Novel.Novel;
 import com.project.NovelWeb.models.entity.User;
@@ -24,24 +24,24 @@ public class NovelServiceImp implements NovelService {
 
     @Override
     @Transactional
-    public Novel createNovel(NovelRequest novelRequest) throws Exception{
+    public Novel createNovel(NovelDTO novelDTO) throws Exception{
         ContentType existingContentType = contentTypeRepository
-                .findById(novelRequest.getContentTypeId())
+                .findById(novelDTO.getContentTypeId())
                 .orElseThrow(() ->
                         new DataNotFoundException(
-                                "Cannot find ContentType with id:" + novelRequest.getContentTypeId()));
+                                "Cannot find ContentType with id:" + novelDTO.getContentTypeId()));
 
         User existingUser = userRepository
-                .findById(novelRequest.getPosterId())
+                .findById(novelDTO.getPosterId())
                 .orElseThrow(() ->
                         new DataNotFoundException(
-                                "Cannot find User with id:" + novelRequest.getPosterId()));
+                                "Cannot find User with id:" + novelDTO.getPosterId()));
         Novel newNovel = Novel
                 .builder()
-                .name(novelRequest.getName())
-                .alias(novelRequest.getAlias())
-                .content(novelRequest.getContent())
-                .image(novelRequest.getImage())
+                .name(novelDTO.getName())
+                .alias(novelDTO.getAlias())
+                .content(novelDTO.getContent())
+                .image(novelDTO.getImage())
                 .contentType(existingContentType)
                 .poster(existingUser)
                 .build();
