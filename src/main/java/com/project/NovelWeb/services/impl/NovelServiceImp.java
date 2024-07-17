@@ -8,18 +8,15 @@ import com.project.NovelWeb.models.entity.User;
 import com.project.NovelWeb.repositories.ContentTypeRepository;
 import com.project.NovelWeb.repositories.NovelRepository;
 import com.project.NovelWeb.repositories.UserRepository;
-import com.project.NovelWeb.responses.NovelResponse;
+import com.project.NovelWeb.responses.novel.NovelResponse;
 import com.project.NovelWeb.services.NovelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,7 +63,13 @@ public class NovelServiceImp implements NovelService {
     }
 
     @Override
-    public Page<NovelResponse> getAllNovels(String keyword,
+    public Page<NovelResponse> getAllNovels(PageRequest pageRequest) {
+        Page<Novel> novelPage = novelRepository.findAll(pageRequest);
+        return novelPage.map(NovelResponse::fromNovel);
+    }
+
+    @Override
+    public Page<NovelResponse> SearchNovel(String keyword,
                                             Long contentTypeId,
                                             PageRequest pageRequest)
     {

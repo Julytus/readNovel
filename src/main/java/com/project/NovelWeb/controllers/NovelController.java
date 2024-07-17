@@ -1,20 +1,26 @@
 package com.project.NovelWeb.controllers;
 
 import com.project.NovelWeb.dtos.NovelDTO;
+import com.project.NovelWeb.models.entity.Novel.ContentType;
 import com.project.NovelWeb.models.entity.Novel.Novel;
-import com.project.NovelWeb.responses.NovelResponse;
+import com.project.NovelWeb.responses.ResponseObject;
+import com.project.NovelWeb.responses.novel.NovelListResponse;
+import com.project.NovelWeb.responses.novel.NovelResponse;
 import com.project.NovelWeb.services.NovelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,6 +28,7 @@ import java.util.List;
 public class NovelController {
     private final NovelService novelService;
     @PostMapping("")
+    @Transactional
     public ResponseEntity<NovelResponse> createNovel(
             @Valid @RequestBody NovelDTO novelDTO,
             BindingResult bindingResult) throws Exception {
@@ -39,12 +46,34 @@ public class NovelController {
         }
         Novel newNovel = novelService.createNovel(novelDTO);
         return ResponseEntity.ok(NovelResponse.builder()
-                .name(novelDTO.getName())
-                .content(novelDTO.getContent())
-                .image(novelDTO.getImage())
-                .posterId(novelDTO.getPosterId())
-                .message("CREATE_NOVEL_SUCCESSFULLY")
-                .contentTypeId(novelDTO.getContentTypeId())
-                .build());
+                        .id(newNovel.getId())
+                        .name(newNovel.getName())
+                        .content(newNovel.getContent())
+                        .image(newNovel.getImage())
+                        .posterId(newNovel.getPoster().getId())
+                        .message("CREATE_NOVEL_SUCCESSFULLY")
+                        .contentTypeId(newNovel.getContentTypes().stream()
+                        .map(ContentType::getId)
+                        .collect(Collectors.toList()))
+                        .build());
+    }
+
+
+    //show all novels
+    @GetMapping("")
+    public ResponseEntity<NovelListResponse> getAllNovels(
+            @RequestParam("page")     int page,
+            @RequestParam("limit")    int limit
+    ) {
+        PageRequest pageRequest = PageRequest.of(
+                page, limit,
+                Sort.by("id").descending());
+
+        Page<NovelResponse> novelResponsePage = novelService.getAllNovels(pageRequest);
+        List<NovelResponse> novelResponseList = novelResponsePage.getContent();
+        return ResponseEntity.ok(NovelListResponse.builder()
+                        .totalPages(novelResponsePage.getTotalPages())
+                        .novelResponseList(novelResponseList)
+                        .build());
     }
 }
