@@ -1,13 +1,12 @@
-package com.project.NovelWeb.responses;
+package com.project.NovelWeb.responses.novel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.NovelWeb.dtos.NovelDTO;
 import com.project.NovelWeb.models.entity.Novel.ContentType;
 import com.project.NovelWeb.models.entity.Novel.Novel;
+import com.project.NovelWeb.responses.BaseResponse;
 import lombok.*;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NovelResponse extends BaseResponse{
+public class NovelResponse extends BaseResponse {
     protected long id;
     private String name;
     private String content;
@@ -28,7 +27,7 @@ public class NovelResponse extends BaseResponse{
     private List<Long> contentTypeId;
 
     public static NovelResponse fromNovel(Novel novel) {
-        NovelResponse novelResponse = NovelResponse
+        return NovelResponse
                 .builder()
                 .id(novel.getId())
                 .name(novel.getName())
@@ -39,6 +38,11 @@ public class NovelResponse extends BaseResponse{
                         .map(ContentType::getId)
                         .collect(Collectors.toList()))
                 .build();
-        return novelResponse;
+    }
+
+    public static List<NovelResponse> fromNovelList(List<Novel> novels) {
+        return novels.stream()
+                .map(NovelResponse::fromNovel)
+                .collect(Collectors.toList());
     }
 }

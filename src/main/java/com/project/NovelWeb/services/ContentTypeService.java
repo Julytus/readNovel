@@ -12,4 +12,5 @@ public interface ContentTypeService {
     List<ContentType> getAllContentTypes();
     void updateContentType(ContentTypeDTO contentTypeDTO, Long id);
     void deleteContentType(Long id) throws ChangeSetPersister.NotFoundException;
+
 }

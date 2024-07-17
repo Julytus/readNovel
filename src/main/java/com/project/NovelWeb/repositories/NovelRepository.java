@@ -1,6 +1,5 @@
 package com.project.NovelWeb.repositories;
 
-import com.project.NovelWeb.models.entity.Novel.ContentType;
 import com.project.NovelWeb.models.entity.Novel.Novel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
