@@ -25,8 +25,10 @@ public class User extends BaseEntity{
     @Column(name = "password", length = 200, nullable = false)
     private String password;
 
-    private String retypePassword;
-
     @Column(name = "is_active")
     private boolean active;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 }

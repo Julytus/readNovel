@@ -6,6 +6,7 @@ import com.project.NovelWeb.models.entity.Novel.ContentType;
 import com.project.NovelWeb.models.entity.Novel.Novel;
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,8 +22,10 @@ public class NovelResponse extends BaseResponse{
     private String status;
     private String image;
     private Long posterId;
+    private String message;
+    private List<String> errors;
     @JsonProperty("content_type_id")
-    private Set<Long> contentTypeId;
+    private List<Long> contentTypeId;
 
     public static NovelResponse fromNovel(Novel novel) {
         NovelResponse novelResponse = NovelResponse
@@ -34,18 +37,8 @@ public class NovelResponse extends BaseResponse{
                 .image(novel.getImage())
                 .contentTypeId(novel.getContentTypes().stream()
                         .map(ContentType::getId)
-                        .collect(Collectors.toSet()))
+                        .collect(Collectors.toList()))
                 .build();
-        return novelResponse;
-    }
-
-    public static NovelResponse fromNovelDTO(NovelDTO novelDTO) {
-        NovelResponse novelResponse = new NovelResponse();
-        novelResponse.setName(novelDTO.getName());
-        novelResponse.setContent(novelDTO.getContent());
-        novelResponse.setImage(novelDTO.getImage());
-        novelResponse.setContentTypeId(novelDTO.getContentTypeId());
-        novelResponse.setPosterId(novelDTO.getPosterId());
         return novelResponse;
     }
 }

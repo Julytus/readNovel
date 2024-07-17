@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,12 +30,10 @@ public class NovelServiceImp implements NovelService {
     private final UserRepository userRepository;
 
     @Override
-    @Transactional
-    public NovelResponse createNovel(NovelDTO novelDTO) throws Exception{
+    public Novel createNovel(NovelDTO novelDTO) throws Exception{
 
         //Get List ContentType for Novel
-
-        Set<ContentType> contentTypes = novelDTO.getContentTypeId().stream()
+        List<ContentType> contentTypes = novelDTO.getContentTypeId().stream()
                 .map(id -> {
                     try {
                         return contentTypeRepository.findById(id)
@@ -43,7 +42,7 @@ public class NovelServiceImp implements NovelService {
                         throw new RuntimeException(e);
                     }
                 })
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
         // Check Poster
 
@@ -52,6 +51,7 @@ public class NovelServiceImp implements NovelService {
                 .orElseThrow(() ->
                         new DataNotFoundException(
                                 "Cannot find User with id:" + novelDTO.getPosterId()));
+
         Novel newNovel = Novel
                 .builder()
                 .name(novelDTO.getName())
@@ -62,7 +62,7 @@ public class NovelServiceImp implements NovelService {
                 .poster(existingUser)
                 .build();
         novelRepository.save(newNovel);
-        return NovelResponse.fromNovelDTO(novelDTO);
+        return newNovel;
     }
 
     @Override
