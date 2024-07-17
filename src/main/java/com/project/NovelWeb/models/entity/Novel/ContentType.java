@@ -4,8 +4,7 @@ import com.project.NovelWeb.models.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "content_types")
@@ -23,5 +22,5 @@ public class ContentType extends BaseEntity {
     private String name;
 
     @ManyToMany(mappedBy = "contentTypes")
-    private Set<Novel> novels = new HashSet<>();
+    private List<Novel> novels;
 }

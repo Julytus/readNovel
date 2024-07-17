@@ -8,6 +8,7 @@ import com.project.NovelWeb.repositories.NovelRepository;
 import com.project.NovelWeb.services.ContentTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,10 +50,10 @@ public class ContentTypeServiceImp implements ContentTypeService {
     @Override
     @Transactional
     public void deleteContentType(Long id) throws ChangeSetPersister.NotFoundException {
-        ContentType contentType = contentTypeRepository.findById(id)
+        contentTypeRepository.findById(id)
                 .orElseThrow(ChangeSetPersister.NotFoundException::new);
 
-        List<Novel> novels = novelRepository.findByContentType(contentType);
+        Page<Novel> novels = novelRepository.searchNovels(id, null, null);
         if (!novels.isEmpty()) {
             throw new IllegalStateException("Cannot delete ContentType with associated novels");
         } else {

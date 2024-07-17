@@ -7,12 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
 
+@Repository
 public interface NovelRepository extends JpaRepository<Novel, Long> {
-    List<Novel> findByContentType(ContentType contentType);
     @Query("SELECT n FROM Novel n WHERE " +
             "(:contentTypeId IS NULL OR EXISTS (SELECT 1 FROM n.contentTypes ct WHERE ct.id = :contentTypeId)) " +
             "AND (:keyword IS NULL OR :keyword = '' OR n.name LIKE %:keyword%)")

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -22,7 +23,7 @@ public class NovelDTO {
     @JsonProperty("image")
     private String image;
     @JsonProperty("content_type_id")
-    private Set<Long> contentTypeId;
+    private List<Long> contentTypeId;
     @JsonProperty("poster_id")
     private Long posterId;
 }

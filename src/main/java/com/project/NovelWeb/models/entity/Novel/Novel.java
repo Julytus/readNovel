@@ -5,8 +5,8 @@ import com.project.NovelWeb.models.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "novels")
@@ -40,11 +40,11 @@ public class Novel extends BaseEntity {
 
     @ManyToMany
     @JoinTable(
-            name = "content_types",
+            name = "novel_content_type",
             joinColumns = @JoinColumn(name = "novel_id"),
-            inverseJoinColumns = @JoinColumn(name = "id")
+            inverseJoinColumns = @JoinColumn(name = "content_type_id")
     )
-    private Set<ContentType> contentTypes = new HashSet<>();
+    private List<ContentType> contentTypes = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "poster_id")
