@@ -34,6 +34,7 @@ public class NovelResponse extends BaseResponse {
                 .content(novel.getContent())
                 .status(novel.getStatus())
                 .image(novel.getImage())
+                .posterId(novel.getPoster().getId())
                 .contentTypeId(novel.getContentTypes().stream()
                         .map(ContentType::getId)
                         .collect(Collectors.toList()))

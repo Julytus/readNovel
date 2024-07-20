@@ -70,10 +70,11 @@ public class NovelServiceImp implements NovelService {
 
     @Override
     public Page<NovelResponse> SearchNovel(String keyword,
-                                            Long contentTypeId,
+                                            List<Long> contentTypeId,
                                             PageRequest pageRequest)
     {
-        Page<Novel> novelPage = novelRepository.searchNovels(contentTypeId, keyword, pageRequest);
+        int contentTypeCount = contentTypeId == null ? 0 : contentTypeId.size();
+        Page<Novel> novelPage = novelRepository.searchNovels(contentTypeId, keyword,contentTypeCount , pageRequest);
         return novelPage.map(NovelResponse::fromNovel);
     }
 

@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -60,7 +59,7 @@ public class NovelController {
 
 
     //show all novels
-    @GetMapping("")
+    @GetMapping("/all")
     public ResponseEntity<NovelListResponse> getAllNovels(
             @RequestParam("page")     int page,
             @RequestParam("limit")    int limit
@@ -75,5 +74,22 @@ public class NovelController {
                         .totalPages(novelResponsePage.getTotalPages())
                         .novelResponseList(novelResponseList)
                         .build());
+    }
+
+    @GetMapping("")
+    public ResponseEntity<NovelListResponse> searchNovel(
+            @RequestParam(defaultValue = "0")       int page,
+            @RequestParam(defaultValue = "10")      int limit,
+            @RequestParam(defaultValue = "")        String keyword,
+            @RequestParam(defaultValue = "", name = "content_type_id")       List<Long> contentTypeId
+    ) {
+//        int totalPages = 0;
+        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("id").ascending());
+        Page<NovelResponse> novelResponses = novelService.SearchNovel(keyword, contentTypeId, pageRequest);
+        List<NovelResponse> novelResponseList = novelResponses.getContent();
+        return ResponseEntity.ok(NovelListResponse.builder()
+                .totalPages(novelResponses.getTotalPages())
+                .novelResponseList(novelResponseList)
+                .build());
     }
 }

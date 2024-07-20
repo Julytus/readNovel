@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -52,8 +53,10 @@ public class ContentTypeServiceImp implements ContentTypeService {
     public void deleteContentType(Long id) throws ChangeSetPersister.NotFoundException {
         contentTypeRepository.findById(id)
                 .orElseThrow(ChangeSetPersister.NotFoundException::new);
+        List<Long> idList = new ArrayList<>();
+        idList.add(id);
 
-        Page<Novel> novels = novelRepository.searchNovels(id, null, null);
+        Page<Novel> novels = novelRepository.searchNovels(idList, null, 1, null);
         if (!novels.isEmpty()) {
             throw new IllegalStateException("Cannot delete ContentType with associated novels");
         } else {
