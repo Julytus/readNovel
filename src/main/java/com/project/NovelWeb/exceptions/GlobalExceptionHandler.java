@@ -3,6 +3,7 @@ package com.project.NovelWeb.exceptions;
 import com.project.NovelWeb.responses.ResponseObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 @RestControllerAdvice //xử lý ngoại lệ chung
@@ -25,5 +26,4 @@ public class GlobalExceptionHandler {
                 .message(exception.getMessage())
                 .build());
     }
-
 }

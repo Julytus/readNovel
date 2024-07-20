@@ -1,5 +1,7 @@
 package com.project.NovelWeb.services.impl;
 
+import com.project.NovelWeb.enums.EnumUtils;
+import com.project.NovelWeb.enums.Status;
 import com.project.NovelWeb.exceptions.DataNotFoundException;
 import com.project.NovelWeb.dtos.NovelDTO;
 import com.project.NovelWeb.models.entity.Novel.ContentType;
@@ -15,8 +17,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,12 +53,23 @@ public class NovelServiceImp implements NovelService {
                         new DataNotFoundException(
                                 "Cannot find User with id:" + novelDTO.getPosterId()));
 
+        String status = novelDTO.getStatus();
+
+        if (status == null || novelDTO.getStatus().trim().isEmpty()) {
+            novelDTO.setStatus("ONGOING");
+        }
+
+        if (!EnumUtils.isValidEnum(Status.class, status)) {
+            throw new Exception("Invalid status value: " + status);
+        }
+
         Novel newNovel = Novel
                 .builder()
                 .name(novelDTO.getName())
                 .alias(novelDTO.getAlias())
                 .content(novelDTO.getContent())
                 .image(novelDTO.getImage())
+                .status(Status.valueOf(status.toUpperCase()))
                 .contentTypes(contentTypes)
                 .poster(existingUser)
                 .build();
@@ -79,42 +94,15 @@ public class NovelServiceImp implements NovelService {
     }
 
     @Override
-    public Novel findByName(String name) {
-        return null;
-    }
-
-    @Override
-    public List<Novel> getNovels(Pageable pageable) {
-        return null;
-    }
-
-    @Override
     public List<Novel> findAllByStatus(String status, Pageable pageable) {
         return null;
     }
 
-    @Override
-    public List<Novel> searchByName(String name, Pageable pageable) {
-        return null;
-    }
 
     @Override
-    public List<Novel> searchByNameAndType(String type, String name, Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public List<Novel> searchByType(String type, Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public Novel findById(Long id) {
-        return null;
-    }
-
-    @Override
+    @Transactional
     public void deleteNovel(Long id) {
-
+        Optional<Novel> optionalNovel = novelRepository.findById(id);
+        optionalNovel.ifPresent(novelRepository::delete);
     }
 }

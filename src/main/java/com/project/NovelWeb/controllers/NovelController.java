@@ -43,6 +43,7 @@ public class NovelController {
                             .build()
             );
         }
+
         Novel newNovel = novelService.createNovel(novelDTO);
         return ResponseEntity.ok(NovelResponse.builder()
                         .id(newNovel.getId())
@@ -50,6 +51,7 @@ public class NovelController {
                         .content(newNovel.getContent())
                         .image(newNovel.getImage())
                         .posterId(newNovel.getPoster().getId())
+                        .status(newNovel.getStatus().toString())
                         .message("CREATE_NOVEL_SUCCESSFULLY")
                         .contentTypeId(newNovel.getContentTypes().stream()
                         .map(ContentType::getId)
