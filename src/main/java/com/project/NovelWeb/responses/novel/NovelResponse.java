@@ -32,7 +32,7 @@ public class NovelResponse extends BaseResponse {
                 .id(novel.getId())
                 .name(novel.getName())
                 .content(novel.getContent())
-                .status(novel.getStatus())
+                .status(novel.getStatus().toString())
                 .image(novel.getImage())
                 .posterId(novel.getPoster().getId())
                 .contentTypeId(novel.getContentTypes().stream()

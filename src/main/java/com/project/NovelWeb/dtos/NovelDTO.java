@@ -26,4 +26,6 @@ public class NovelDTO {
     private List<Long> contentTypeId;
     @JsonProperty("poster_id")
     private Long posterId;
+    @JsonProperty("status")
+    private String status;
 }

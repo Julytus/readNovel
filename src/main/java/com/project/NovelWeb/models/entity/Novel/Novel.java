@@ -1,5 +1,6 @@
 package com.project.NovelWeb.models.entity.Novel;
 
+import com.project.NovelWeb.enums.Status;
 import com.project.NovelWeb.models.entity.BaseEntity;
 import com.project.NovelWeb.models.entity.User;
 import jakarta.persistence.*;
@@ -32,8 +33,9 @@ public class Novel extends BaseEntity {
     @Column(name = "view")
     private Long view;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private Status status;
 
     @Column(name = "image")
     private String image;

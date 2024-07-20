@@ -15,12 +15,6 @@ public interface NovelService {
 
     Page<NovelResponse> getAllNovels(PageRequest pageRequest);
     Page<NovelResponse> SearchNovel(String keyword, List<Long> contentTypeId, PageRequest pageRequest);
-    Novel findByName(String name);
-    List<Novel> getNovels(Pageable pageable);
     List<Novel> findAllByStatus(String status, Pageable pageable);
-    List<Novel> searchByName(String name, Pageable pageable);
-    List<Novel> searchByNameAndType(String type, String name, Pageable pageable);
-    List<Novel> searchByType(String type, Pageable pageable);
-    Novel findById(Long id);
     void deleteNovel(Long id);
 }

@@ -31,4 +31,5 @@ public interface NovelRepository extends JpaRepository<Novel, Long> {
             @Param("keyword") String keyword,
             @Param("contentTypeCount") int contentTypeCount,
             Pageable pageable);
+    
 }
