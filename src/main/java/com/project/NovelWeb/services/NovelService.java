@@ -14,7 +14,7 @@ public interface NovelService {
     Novel createNovel(NovelDTO novelDTO) throws Exception;
 
     Page<NovelResponse> getAllNovels(PageRequest pageRequest);
-    Page<NovelResponse> SearchNovel(String keyword, Long contentTypeId, PageRequest pageRequest);
+    Page<NovelResponse> SearchNovel(String keyword, List<Long> contentTypeId, PageRequest pageRequest);
     Novel findByName(String name);
     List<Novel> getNovels(Pageable pageable);
     List<Novel> findAllByStatus(String status, Pageable pageable);
