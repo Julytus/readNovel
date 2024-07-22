@@ -2,6 +2,7 @@ package com.project.NovelWeb.controllers;
 
 import com.project.NovelWeb.dtos.UserDTO;
 import com.project.NovelWeb.dtos.UserLoginDTO;
+import com.project.NovelWeb.exceptions.MethodArgumentNotValidException;
 import com.project.NovelWeb.models.entity.User;
 import com.project.NovelWeb.responses.ResponseObject;
 import com.project.NovelWeb.responses.UserResponse;
@@ -12,18 +13,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+
 
 @RestController
 @RequestMapping("${api.prefix}/user")
 @RequiredArgsConstructor
-public class UserController {
+public class AuthenticationController {
     private final UserService userService;
     @PostMapping("/register")
     public ResponseEntity<ResponseObject> register(
@@ -31,16 +31,7 @@ public class UserController {
             BindingResult bindingResult
             ) throws Exception{
         if (bindingResult.hasErrors()) {
-            List<String> errors = bindingResult.getFieldErrors()
-                    .stream()
-                    .map(FieldError::getDefaultMessage)
-                    .toList();
-            return ResponseEntity.badRequest().body(ResponseObject
-                    .builder()
-                    .status(HttpStatus.BAD_REQUEST)
-                    .data(null)
-                    .message(errors.toString())
-                    .build());
+            throw new MethodArgumentNotValidException(bindingResult);
         }
 
         if (!userDTO.getRetypePassword().equals(userDTO.getPassword())) {
