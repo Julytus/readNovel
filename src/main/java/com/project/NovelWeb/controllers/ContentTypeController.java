@@ -1,6 +1,7 @@
 package com.project.NovelWeb.controllers;
 
 import com.project.NovelWeb.dtos.ContentTypeDTO;
+import com.project.NovelWeb.exceptions.MethodArgumentNotValidException;
 import com.project.NovelWeb.responses.ResponseObject;
 import com.project.NovelWeb.models.entity.Novel.ContentType;
 import com.project.NovelWeb.responses.ContentTypeResponse;
@@ -25,16 +26,10 @@ public class ContentTypeController {
     @PostMapping("")
     public ResponseEntity<ContentTypeResponse> createContentType(
             @Valid @RequestBody ContentTypeDTO contentTypeDTO,
-            BindingResult bindingResult) {
+            BindingResult bindingResult) throws MethodArgumentNotValidException {
         ContentTypeResponse contentTypeResponse = new ContentTypeResponse();
         if (bindingResult.hasErrors()) {
-            List<String> errorMessages = bindingResult.getFieldErrors()
-                    .stream()
-                    .map(FieldError::getDefaultMessage)
-                    .toList();
-            contentTypeResponse.setMessage("INSERT_ContentType_FAILED");
-            contentTypeResponse.setErrors(errorMessages);
-            return ResponseEntity.badRequest().body(contentTypeResponse);
+            throw new MethodArgumentNotValidException(bindingResult);
         }
         ContentType contentType = contentTypeServiceImp.createContentType(contentTypeDTO);
         contentTypeResponse.setContentType(contentType);
