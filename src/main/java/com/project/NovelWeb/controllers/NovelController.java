@@ -55,8 +55,8 @@ public class NovelController {
     //show all novels
     @GetMapping("/all")
     public ResponseEntity<NovelListResponse> getAllNovels(
-            @RequestParam("page")     int page,
-            @RequestParam("limit")    int limit
+            @RequestParam(defaultValue = "0")     int page,
+            @RequestParam(defaultValue = "10")    int limit
     ) {
         PageRequest pageRequest = PageRequest.of(
                 page, limit,
