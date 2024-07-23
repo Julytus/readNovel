@@ -1,8 +1,9 @@
 package com.project.NovelWeb.components;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.project.NovelWeb.models.entity.Token;
+import com.project.NovelWeb.models.entity.User;
+import com.project.NovelWeb.repositories.TokenRepository;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class JwtTokenUtils {
 
     @Value("${jwt.secretKey}")
     private String secretKey;
+    private final TokenRepository tokenRepository;
 
     public String generateToken(com.project.NovelWeb.models.entity.User user) throws Exception{
         Map<String, Object> claims = new HashMap<>();
@@ -69,6 +71,28 @@ public class JwtTokenUtils {
 
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public boolean validateToken(String token, User user) {
+//        try {
+//            String email = extractEmail(token);
+//            Token existingToken = tokenRepository.findByToken(token);
+//            if (existingToken == null ||
+//                    existingToken.isRevoked() ||
+//                    !user.isActive()) {
+//                return false;
+//            }
+//        } catch (MalformedJwtException e) {
+//            throw new Exception("Invalid JWT token. error: " + e.getMessage());
+//        } catch (ExpiredJwtException e) {
+//            throw new Exception("JWT token is expired, error: " +  e.getMessage());
+//        } catch (UnsupportedJwtException e) {
+//            throw new Exception("JWT token is unsupported, error: " + e.getMessage());
+//        }
+//        return false;
+        String phoneNumber = extractEmail(token);
+        return (phoneNumber.equals(user.getUsername()))
+                && !isTokenExpired(token);
     }
 
 }
