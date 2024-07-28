@@ -17,6 +17,6 @@ spring:
 api:
   prefix: /api/v1
 jwt:
-  expiration: 360000
+  expiration: 3600000
   expiration-refresh-token: 2592000
   secretKey: TuAnD3pZa1V0D1ch=/ChuaT3DePZa1V0Dick+T84IABv

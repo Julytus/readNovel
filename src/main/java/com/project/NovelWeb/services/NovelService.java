@@ -15,6 +15,6 @@ public interface NovelService {
 
     Page<NovelResponse> getAllNovels(PageRequest pageRequest);
     Page<NovelResponse> SearchNovel(String keyword, List<Long> contentTypeId, PageRequest pageRequest);
-    List<Novel> findAllByStatus(String status, Pageable pageable);
+    Page<NovelResponse> findAllByStatus(String status, PageRequest pageRequest) throws Exception;
     void deleteNovel(Long id);
 }
