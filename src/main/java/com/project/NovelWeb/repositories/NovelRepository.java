@@ -1,5 +1,6 @@
 package com.project.NovelWeb.repositories;
 
+import com.project.NovelWeb.enums.Status;
 import com.project.NovelWeb.models.entity.Novel.Novel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,5 +32,6 @@ public interface NovelRepository extends JpaRepository<Novel, Long> {
             @Param("keyword") String keyword,
             @Param("contentTypeCount") int contentTypeCount,
             Pageable pageable);
-    
+
+    Page<Novel> findAllByStatus(Status status, Pageable pageable);
 }

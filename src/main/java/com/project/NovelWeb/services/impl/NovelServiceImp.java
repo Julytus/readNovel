@@ -15,7 +15,6 @@ import com.project.NovelWeb.services.NovelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,8 +93,13 @@ public class NovelServiceImp implements NovelService {
     }
 
     @Override
-    public List<Novel> findAllByStatus(String status, Pageable pageable) {
-        return null;
+    public Page<NovelResponse> findAllByStatus(String status, PageRequest pageRequest) throws Exception {
+        Status existingStatus = Status.valueOf(status.toUpperCase());
+        if (!EnumUtils.isValidEnum(Status.class, status)) {
+            throw new Exception("Invalid status value: " + existingStatus);
+        }
+        Page<Novel> novelPage = novelRepository.findAllByStatus(existingStatus, pageRequest);
+        return novelPage.map(NovelResponse::fromNovel);
     }
 
 

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -80,10 +81,33 @@ public class NovelController {
 //        int totalPages = 0;
         PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("id").ascending());
         Page<NovelResponse> novelResponses = novelService.SearchNovel(keyword, contentTypeId, pageRequest);
-        List<NovelResponse> novelResponseList = novelResponses.getContent();
         return ResponseEntity.ok(NovelListResponse.builder()
                 .totalPages(novelResponses.getTotalPages())
-                .novelResponseList(novelResponseList)
+                .novelResponseList(novelResponses.getContent())
+                .build());
+    }
+
+    @GetMapping("/{status}")
+    public ResponseEntity<NovelListResponse> getNovelsByStatus(
+            @PathVariable("status") String status,
+            @RequestParam(defaultValue = "0")       int page,
+            @RequestParam(defaultValue = "10")      int limit) throws Exception {
+        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("id").ascending());
+        Page<NovelResponse> novelResponses = novelService.findAllByStatus(status, pageRequest);
+        return ResponseEntity.ok(NovelListResponse.builder()
+                .totalPages(novelResponses.getTotalPages())
+                .novelResponseList(novelResponses.getContent())
+                .build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseObject> deleteNovel(@PathVariable Long id) {
+        novelService.deleteNovel(id);
+        return ResponseEntity.ok(ResponseObject
+                .builder()
+                .data(null)
+                .message(String.format("Novel with id = %d deleted successfully", id))
+                .status(HttpStatus.OK)
                 .build());
     }
 }
