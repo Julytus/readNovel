@@ -17,11 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -37,19 +35,8 @@ public class NovelController {
             throw new MethodArgumentNotValidException(bindingResult);
         }
 
-        Novel newNovel = novelService.createNovel(novelDTO);
-        return ResponseEntity.ok(NovelResponse.builder()
-                        .id(newNovel.getId())
-                        .name(newNovel.getName())
-                        .content(newNovel.getContent())
-                        .image(newNovel.getImage())
-                        .posterId(newNovel.getPoster().getId())
-                        .status(newNovel.getStatus().toString())
-                        .message("CREATE_NOVEL_SUCCESSFULLY")
-                        .contentTypeId(newNovel.getContentTypes().stream()
-                        .map(ContentType::getId)
-                        .collect(Collectors.toList()))
-                        .build());
+        NovelResponse newNovel = novelService.createNovel(novelDTO);
+        return ResponseEntity.ok(newNovel);
     }
 
 
@@ -101,12 +88,27 @@ public class NovelController {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<ResponseObject> deleteNovel(@PathVariable Long id) {
         novelService.deleteNovel(id);
         return ResponseEntity.ok(ResponseObject
                 .builder()
                 .data(null)
                 .message(String.format("Novel with id = %d deleted successfully", id))
+                .status(HttpStatus.OK)
+                .build());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseObject> updateNovel(
+            @PathVariable Long id,
+            @Valid @RequestBody NovelDTO novelDTO
+    ) throws Exception {
+        NovelResponse novelResponse = novelService.updateNovel(id, novelDTO);
+        return ResponseEntity.ok(ResponseObject
+                .builder()
+                .data(novelResponse)
+                .message(String.format("Novel with id = %d updated successfully", id))
                 .status(HttpStatus.OK)
                 .build());
     }

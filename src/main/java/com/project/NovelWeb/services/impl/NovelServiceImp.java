@@ -25,12 +25,21 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class NovelServiceImp implements NovelService {
+    @Override
+    public Novel getNovelById(Long id) throws Exception {
+        Optional<Novel> optionalNovel = novelRepository.getDetailNovel(id);
+        if (optionalNovel.isPresent()) {
+            return optionalNovel.get();
+        }
+        throw new DataNotFoundException("CANNOT_FIND_NOVEL_WITH_ID: " + id);
+    }
+
     private final NovelRepository novelRepository;
     private final ContentTypeRepository contentTypeRepository;
     private final UserRepository userRepository;
 
     @Override
-    public Novel createNovel(NovelDTO novelDTO) throws Exception{
+    public NovelResponse createNovel(NovelDTO novelDTO) throws Exception{
 
         //Get List ContentType for Novel
         List<ContentType> contentTypes = novelDTO.getContentTypeId().stream()
@@ -73,7 +82,19 @@ public class NovelServiceImp implements NovelService {
                 .poster(existingUser)
                 .build();
         novelRepository.save(newNovel);
-        return newNovel;
+
+        return NovelResponse.builder()
+                .id(newNovel.getId())
+                .name(newNovel.getName())
+                .content(newNovel.getContent())
+                .image(newNovel.getImage())
+                .posterId(newNovel.getPoster().getId())
+                .status(newNovel.getStatus().toString())
+                .message("CREATE_NOVEL_SUCCESSFULLY")
+                .contentTypeId(newNovel.getContentTypes().stream()
+                        .map(ContentType::getId)
+                        .collect(Collectors.toList()))
+                .build();
     }
 
     @Override
@@ -96,7 +117,7 @@ public class NovelServiceImp implements NovelService {
     public Page<NovelResponse> findAllByStatus(String status, PageRequest pageRequest) throws Exception {
         Status existingStatus = Status.valueOf(status.toUpperCase());
         if (!EnumUtils.isValidEnum(Status.class, status)) {
-            throw new Exception("Invalid status value: " + existingStatus);
+            throw new Exception("Invalid status value: " + status);
         }
         Page<Novel> novelPage = novelRepository.findAllByStatus(existingStatus, pageRequest);
         return novelPage.map(NovelResponse::fromNovel);
@@ -108,5 +129,52 @@ public class NovelServiceImp implements NovelService {
     public void deleteNovel(Long id) {
         Optional<Novel> optionalNovel = novelRepository.findById(id);
         optionalNovel.ifPresent(novelRepository::delete);
+    }
+
+    @Override
+    public NovelResponse updateNovel(Long novelId, NovelDTO novelDTO) throws Exception {
+        Novel existingNovel = getNovelById(novelId);
+        if (existingNovel != null) {
+            List<ContentType> contentTypes = novelDTO.getContentTypeId().stream()
+                    .map(id -> {
+                        try {
+                            return contentTypeRepository.findById(id)
+                                    .orElseThrow(() -> new DataNotFoundException(
+                                            "Cannot find ContentType with id: " + id));
+                        } catch (DataNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .collect(Collectors.toList());
+            existingNovel.setContentTypes(contentTypes);
+            if (novelDTO.getName() != null && !novelDTO.getName().isEmpty()) {
+                existingNovel.setName(novelDTO.getName());
+            }
+            if (novelDTO.getAlias() != null && !novelDTO.getAlias().isEmpty()) {
+                existingNovel.setAlias(novelDTO.getAlias());
+            }
+            if (novelDTO.getPosterId() != null ) {
+                User existingUser = userRepository
+                        .findById(novelDTO.getPosterId())
+                        .orElseThrow(() ->
+                                new DataNotFoundException(
+                                        "Cannot find User with id:" + novelDTO.getPosterId()));
+                existingNovel.setPoster(existingUser);
+            }
+            if (novelDTO.getImage() != null && !novelDTO.getImage().isEmpty()) {
+                existingNovel.setImage(novelDTO.getImage());
+            }
+            if (novelDTO.getContent() != null && !novelDTO.getContent().isEmpty()) {
+                existingNovel.setContent(novelDTO.getContent());
+            }
+            Status existingStatus = Status.valueOf(novelDTO.getStatus().toUpperCase());
+            if (!EnumUtils.isValidEnum(Status.class, novelDTO.getStatus())) {
+                throw new Exception("Invalid status value: " + novelDTO.getStatus());
+            }
+            existingNovel.setStatus(existingStatus);
+            Novel novel = novelRepository.save(existingNovel);
+            return NovelResponse.fromNovel(novel);
+        }
+        return null;
     }
 }

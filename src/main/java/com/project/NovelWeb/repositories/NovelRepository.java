@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -34,4 +35,7 @@ public interface NovelRepository extends JpaRepository<Novel, Long> {
             Pageable pageable);
 
     Page<Novel> findAllByStatus(Status status, Pageable pageable);
+
+    @Query("SELECT n FROM Novel n LEFT JOIN FETCH n.contentTypes ct WHERE n.id = :novelId")
+    Optional<Novel> getDetailNovel(@Param("novelId") Long novelId);
 }
