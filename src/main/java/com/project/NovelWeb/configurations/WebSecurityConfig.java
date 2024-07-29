@@ -17,8 +17,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
@@ -41,6 +40,12 @@ public class WebSecurityConfig {
                                  String.format("%s/novel/**", apiPrefix)).permitAll()
 
                          .requestMatchers(POST,
+                                 String.format("%s/novel/**", apiPrefix)).hasRole(Role.ADMIN)
+
+                         .requestMatchers(DELETE,
+                                 String.format("%s/novel/**", apiPrefix)).hasRole(Role.ADMIN)
+
+                         .requestMatchers(PUT,
                                  String.format("%s/novel/**", apiPrefix)).hasRole(Role.ADMIN)
                          .anyRequest().authenticated())
 

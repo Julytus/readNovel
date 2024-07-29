@@ -11,10 +11,14 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface NovelService {
-    Novel createNovel(NovelDTO novelDTO) throws Exception;
+    NovelResponse createNovel(NovelDTO novelDTO) throws Exception;
 
     Page<NovelResponse> getAllNovels(PageRequest pageRequest);
     Page<NovelResponse> SearchNovel(String keyword, List<Long> contentTypeId, PageRequest pageRequest);
     Page<NovelResponse> findAllByStatus(String status, PageRequest pageRequest) throws Exception;
     void deleteNovel(Long id);
+
+    Novel getNovelById(Long id) throws Exception;
+
+    NovelResponse updateNovel(Long id, NovelDTO novelDTO) throws Exception;
 }
