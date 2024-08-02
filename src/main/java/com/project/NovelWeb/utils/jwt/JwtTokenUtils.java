@@ -89,8 +89,8 @@ public class JwtTokenUtils {
 //            throw new Exception("JWT token is unsupported, error: " + e.getMessage());
 //        }
 //        return false;
-        String phoneNumber = extractEmail(token);
-        return (phoneNumber.equals(user.getUsername()))
+        String email = extractEmail(token);
+        return (email.equals(user.getUsername()))
                 && !isTokenExpired(token);
     }
 
