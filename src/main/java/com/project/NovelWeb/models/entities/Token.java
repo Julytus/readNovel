@@ -1,4 +1,4 @@
-package com.project.NovelWeb.models.entity;
+package com.project.NovelWeb.models.entities;
 
 import jakarta.persistence.*;
 import lombok.*;

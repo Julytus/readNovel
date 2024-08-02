@@ -1,8 +1,8 @@
 package com.project.NovelWeb.services.impl;
 
-import com.project.NovelWeb.dtos.ContentTypeDTO;
-import com.project.NovelWeb.models.entity.Novel.ContentType;
-import com.project.NovelWeb.models.entity.Novel.Novel;
+import com.project.NovelWeb.models.dtos.ContentTypeDTO;
+import com.project.NovelWeb.models.entities.Novel.ContentType;
+import com.project.NovelWeb.models.entities.Novel.Novel;
 import com.project.NovelWeb.repositories.ContentTypeRepository;
 import com.project.NovelWeb.repositories.NovelRepository;
 import com.project.NovelWeb.services.ContentTypeService;

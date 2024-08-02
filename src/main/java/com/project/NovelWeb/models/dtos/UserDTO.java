@@ -1,4 +1,4 @@
-package com.project.NovelWeb.dtos;
+package com.project.NovelWeb.models.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.NovelWeb.enums.Status;

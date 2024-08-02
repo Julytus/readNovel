@@ -1,7 +1,7 @@
 package com.project.NovelWeb.filters;
 
-import com.project.NovelWeb.components.JwtTokenUtils;
-import com.project.NovelWeb.models.entity.User;
+import com.project.NovelWeb.utils.jwt.JwtTokenUtils;
+import com.project.NovelWeb.models.entities.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

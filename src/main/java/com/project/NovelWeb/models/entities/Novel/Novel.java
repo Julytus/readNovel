@@ -1,8 +1,8 @@
-package com.project.NovelWeb.models.entity.Novel;
+package com.project.NovelWeb.models.entities.Novel;
 
 import com.project.NovelWeb.enums.Status;
-import com.project.NovelWeb.models.entity.BaseEntity;
-import com.project.NovelWeb.models.entity.User;
+import com.project.NovelWeb.models.entities.BaseEntity;
+import com.project.NovelWeb.models.entities.User;
 import jakarta.persistence.*;
 import lombok.*;
 

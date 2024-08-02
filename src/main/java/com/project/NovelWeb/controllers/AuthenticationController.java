@@ -1,13 +1,15 @@
 package com.project.NovelWeb.controllers;
 
-import com.project.NovelWeb.dtos.UserDTO;
-import com.project.NovelWeb.dtos.UserLoginDTO;
+import com.project.NovelWeb.models.dtos.UserDTO;
+import com.project.NovelWeb.models.dtos.UserLoginDTO;
 import com.project.NovelWeb.exceptions.MethodArgumentNotValidException;
-import com.project.NovelWeb.models.entity.User;
+import com.project.NovelWeb.models.entities.User;
+import com.project.NovelWeb.responses.LoginResponse;
 import com.project.NovelWeb.responses.ResponseObject;
 import com.project.NovelWeb.responses.UserResponse;
 import com.project.NovelWeb.services.UserService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.project.NovelWeb.utils.localization.LocalizationUtils;
+import com.project.NovelWeb.utils.localization.MessageKeys;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final UserService userService;
+    private final LocalizationUtils localizationUtils;
     @PostMapping("/register")
     public ResponseEntity<ResponseObject> register(
             @Valid @RequestBody UserDTO userDTO,
@@ -39,7 +42,7 @@ public class AuthenticationController {
                     .builder()
                     .status(HttpStatus.BAD_REQUEST)
                     .data(null)
-                    .message("PASSWORD_NOT_MATCH")
+                    .message(localizationUtils.getLocalizedMessage(MessageKeys.PASSWORD_NOT_MATCH))
                     .build());
         }
         User user = userService.createUser(userDTO);
@@ -47,25 +50,23 @@ public class AuthenticationController {
                 .builder()
                 .status(HttpStatus.CREATED)
                 .data(UserResponse.fromUser(user))
-                .message("REGISTER_SUCCESSFULLY.")
+                .message(localizationUtils.getLocalizedMessage(MessageKeys.REGISTER_SUCCESSFULLY))
                 .build());
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseObject> login(
-            @Valid @RequestBody UserLoginDTO userLoginDTO,
-            HttpServletRequest request
+    public ResponseEntity<LoginResponse> login(
+            @Valid @RequestBody UserLoginDTO userLoginDTO
             ) throws Exception{
         //Check info and generate Token
         String token = userService.login(
                 userLoginDTO.getEmail(),
                 userLoginDTO.getPassword(),
                 userLoginDTO.getRoleId() == null ? 1 : userLoginDTO.getRoleId());
-        return ResponseEntity.ok(ResponseObject
+        return ResponseEntity.ok(LoginResponse
                 .builder()
-                .data(token)
-                .message("LOGIN_SUCCESSFULLY.")
+                .token(token)
+                .message(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_SUCCESSFULLY))
                 .build());
-
     }
 }

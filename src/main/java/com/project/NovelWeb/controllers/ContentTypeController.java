@@ -1,9 +1,9 @@
 package com.project.NovelWeb.controllers;
 
-import com.project.NovelWeb.dtos.ContentTypeDTO;
+import com.project.NovelWeb.models.dtos.ContentTypeDTO;
 import com.project.NovelWeb.exceptions.MethodArgumentNotValidException;
 import com.project.NovelWeb.responses.ResponseObject;
-import com.project.NovelWeb.models.entity.Novel.ContentType;
+import com.project.NovelWeb.models.entities.Novel.ContentType;
 import com.project.NovelWeb.responses.ContentTypeResponse;
 import com.project.NovelWeb.services.impl.ContentTypeServiceImp;
 import jakarta.validation.Valid;
@@ -12,7 +12,6 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

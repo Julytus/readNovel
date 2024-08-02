@@ -2,7 +2,7 @@ package com.project.NovelWeb.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.project.NovelWeb.models.entity.Novel.ContentType;
+import com.project.NovelWeb.models.entities.Novel.ContentType;
 import lombok.*;
 
 import java.util.List;
