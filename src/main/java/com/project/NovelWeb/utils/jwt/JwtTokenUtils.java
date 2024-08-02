@@ -1,4 +1,4 @@
-package com.project.NovelWeb.components;
+package com.project.NovelWeb.utils.jwt;
 
 import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.repositories.TokenRepository;

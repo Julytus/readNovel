@@ -1,6 +1,6 @@
 package com.project.NovelWeb.services.impl;
 
-import com.project.NovelWeb.components.JwtTokenUtils;
+import com.project.NovelWeb.utils.jwt.JwtTokenUtils;
 import com.project.NovelWeb.models.dtos.UserDTO;
 import com.project.NovelWeb.exceptions.DataNotFoundException;
 import com.project.NovelWeb.exceptions.PermissionDenyException;
@@ -9,8 +9,8 @@ import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.repositories.RoleRepository;
 import com.project.NovelWeb.repositories.UserRepository;
 import com.project.NovelWeb.services.UserService;
-import com.project.NovelWeb.utils.LocalizationUtils;
-import com.project.NovelWeb.utils.MessageKeys;
+import com.project.NovelWeb.utils.localization.LocalizationUtils;
+import com.project.NovelWeb.utils.localization.MessageKeys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;

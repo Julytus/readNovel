@@ -1,4 +1,4 @@
-package com.project.NovelWeb.utils;
+package com.project.NovelWeb.utils.localization;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
