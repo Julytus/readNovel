@@ -1,7 +1,7 @@
 package com.project.NovelWeb.services;
 
-import com.project.NovelWeb.dtos.ContentTypeDTO;
-import com.project.NovelWeb.models.entity.Novel.ContentType;
+import com.project.NovelWeb.models.dtos.ContentTypeDTO;
+import com.project.NovelWeb.models.entities.Novel.ContentType;
 import org.springframework.data.crossstore.ChangeSetPersister;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.project.NovelWeb.repositories;
 
 import com.project.NovelWeb.enums.Status;
-import com.project.NovelWeb.models.entity.Novel.Novel;
+import com.project.NovelWeb.models.entities.Novel.Novel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

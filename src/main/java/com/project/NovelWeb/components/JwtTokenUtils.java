@@ -1,7 +1,6 @@
 package com.project.NovelWeb.components;
 
-import com.project.NovelWeb.models.entity.Token;
-import com.project.NovelWeb.models.entity.User;
+import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.repositories.TokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -29,7 +28,7 @@ public class JwtTokenUtils {
     private String secretKey;
     private final TokenRepository tokenRepository;
 
-    public String generateToken(com.project.NovelWeb.models.entity.User user) throws Exception{
+    public String generateToken(com.project.NovelWeb.models.entities.User user) throws Exception{
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", user.getEmail());
         claims.put("userId", user.getId());

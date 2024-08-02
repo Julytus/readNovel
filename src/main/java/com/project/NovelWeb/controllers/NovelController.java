@@ -1,9 +1,7 @@
 package com.project.NovelWeb.controllers;
 
-import com.project.NovelWeb.dtos.NovelDTO;
+import com.project.NovelWeb.models.dtos.NovelDTO;
 import com.project.NovelWeb.exceptions.MethodArgumentNotValidException;
-import com.project.NovelWeb.models.entity.Novel.ContentType;
-import com.project.NovelWeb.models.entity.Novel.Novel;
 import com.project.NovelWeb.responses.ResponseObject;
 import com.project.NovelWeb.responses.novel.NovelListResponse;
 import com.project.NovelWeb.responses.novel.NovelResponse;

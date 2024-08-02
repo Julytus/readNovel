@@ -2,8 +2,8 @@ package com.project.NovelWeb.repositories;
 
 
 
-import com.project.NovelWeb.models.entity.Token;
-import com.project.NovelWeb.models.entity.User;
+import com.project.NovelWeb.models.entities.Token;
+import com.project.NovelWeb.models.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

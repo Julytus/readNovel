@@ -1,7 +1,7 @@
 package com.project.NovelWeb.configurations;
 
 import com.project.NovelWeb.filters.JwtTokenFilter;
-import com.project.NovelWeb.models.entity.Role;
+import com.project.NovelWeb.models.entities.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -50,16 +50,16 @@ public class WebSecurityConfig {
                          .anyRequest().authenticated())
 
                  .csrf(AbstractHttpConfigurer::disable);
-//        http.cors(httpSecurityCorsConfigurer -> {
-//            CorsConfiguration configuration = new CorsConfiguration();
-//            configuration.setAllowedOrigins(List.of("*"));
-//            configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-//            configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
-//            configuration.setExposedHeaders(List.of("x-auth-token"));
-//            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//            source.registerCorsConfiguration("/**", configuration);
-//            httpSecurityCorsConfigurer.configurationSource(source);
-//        });
+        http.cors(httpSecurityCorsConfigurer -> {
+            CorsConfiguration configuration = new CorsConfiguration();
+            configuration.setAllowedOrigins(List.of("http://localhost:4200/"));
+            configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+            configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
+            configuration.setExposedHeaders(List.of("x-auth-token"));
+            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+            source.registerCorsConfiguration("/**", configuration);
+            httpSecurityCorsConfigurer.configurationSource(source);
+        });
         return http.build();
     }
 }

@@ -1,8 +1,8 @@
 package com.project.NovelWeb.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.NovelWeb.models.entity.Role;
-import com.project.NovelWeb.models.entity.User;
+import com.project.NovelWeb.models.entities.Role;
+import com.project.NovelWeb.models.entities.User;
 import lombok.*;
 
 @Getter

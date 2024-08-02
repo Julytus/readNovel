@@ -1,8 +1,8 @@
 package com.project.NovelWeb.responses.novel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.NovelWeb.models.entity.Novel.ContentType;
-import com.project.NovelWeb.models.entity.Novel.Novel;
+import com.project.NovelWeb.models.entities.Novel.ContentType;
+import com.project.NovelWeb.models.entities.Novel.Novel;
 import com.project.NovelWeb.responses.BaseResponse;
 import lombok.*;
 

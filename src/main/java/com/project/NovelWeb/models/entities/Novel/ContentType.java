@@ -1,6 +1,6 @@
-package com.project.NovelWeb.models.entity.Novel;
+package com.project.NovelWeb.models.entities.Novel;
 
-import com.project.NovelWeb.models.entity.BaseEntity;
+import com.project.NovelWeb.models.entities.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
