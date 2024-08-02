@@ -3,9 +3,9 @@ package com.project.NovelWeb.services.impl;
 import com.project.NovelWeb.enums.EnumUtils;
 import com.project.NovelWeb.enums.Status;
 import com.project.NovelWeb.exceptions.DataNotFoundException;
-import com.project.NovelWeb.models.dtos.NovelDTO;
-import com.project.NovelWeb.models.entities.Novel.ContentType;
-import com.project.NovelWeb.models.entities.Novel.Novel;
+import com.project.NovelWeb.models.dtos.novel.NovelDTO;
+import com.project.NovelWeb.models.entities.novel.ContentType;
+import com.project.NovelWeb.models.entities.novel.Novel;
 import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.repositories.ContentTypeRepository;
 import com.project.NovelWeb.repositories.NovelRepository;
@@ -76,7 +76,7 @@ public class NovelServiceImp implements NovelService {
                 .name(novelDTO.getName())
                 .alias(novelDTO.getAlias())
                 .content(novelDTO.getContent())
-                .image(novelDTO.getImage())
+                .imageUrl(novelDTO.getImage())
                 .status(Status.valueOf(status.toUpperCase()))
                 .contentTypes(contentTypes)
                 .poster(existingUser)
@@ -87,7 +87,7 @@ public class NovelServiceImp implements NovelService {
                 .id(newNovel.getId())
                 .name(newNovel.getName())
                 .content(newNovel.getContent())
-                .image(newNovel.getImage())
+                .image(newNovel.getImageUrl())
                 .posterId(newNovel.getPoster().getId())
                 .status(newNovel.getStatus().toString())
                 .message("CREATE_NOVEL_SUCCESSFULLY")
@@ -162,7 +162,7 @@ public class NovelServiceImp implements NovelService {
                 existingNovel.setPoster(existingUser);
             }
             if (novelDTO.getImage() != null && !novelDTO.getImage().isEmpty()) {
-                existingNovel.setImage(novelDTO.getImage());
+                existingNovel.setImageUrl(novelDTO.getImage());
             }
             if (novelDTO.getContent() != null && !novelDTO.getContent().isEmpty()) {
                 existingNovel.setContent(novelDTO.getContent());

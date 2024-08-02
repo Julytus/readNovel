@@ -1,4 +1,4 @@
-package com.project.NovelWeb.models.entities.Novel;
+package com.project.NovelWeb.models.entities.novel;
 
 import com.project.NovelWeb.enums.Status;
 import com.project.NovelWeb.models.entities.BaseEntity;
@@ -38,7 +38,7 @@ public class Novel extends BaseEntity {
     private Status status;
 
     @Column(name = "image")
-    private String image;
+    private String imageUrl;
 
     @ManyToMany
     @JoinTable(
@@ -51,4 +51,10 @@ public class Novel extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "poster_id")
     private User poster;
+
+    @Column(name = "author_id")
+    private Long authorId;
+
+    @Column(name = "last_chapter_id")
+    private Integer lastChapterId;
 }

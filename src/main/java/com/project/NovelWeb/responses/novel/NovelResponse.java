@@ -1,8 +1,8 @@
 package com.project.NovelWeb.responses.novel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.NovelWeb.models.entities.Novel.ContentType;
-import com.project.NovelWeb.models.entities.Novel.Novel;
+import com.project.NovelWeb.models.entities.novel.ContentType;
+import com.project.NovelWeb.models.entities.novel.Novel;
 import com.project.NovelWeb.responses.BaseResponse;
 import lombok.*;
 
@@ -20,11 +20,15 @@ public class NovelResponse extends BaseResponse {
     private String content;
     private String status;
     private String image;
+    @JsonProperty("poster_id")
     private Long posterId;
+    @JsonProperty("author_id")
+    private Long authorId;
     private String message;
     private List<String> errors;
     @JsonProperty("content_type_id")
     private List<Long> contentTypeId;
+    @JsonProperty("last_chapter_id")
 
     public static NovelResponse fromNovel(Novel novel) {
         return NovelResponse
@@ -33,8 +37,9 @@ public class NovelResponse extends BaseResponse {
                 .name(novel.getName())
                 .content(novel.getContent())
                 .status(novel.getStatus().toString())
-                .image(novel.getImage())
+                .image(novel.getImageUrl())
                 .posterId(novel.getPoster().getId())
+                .authorId(novel.getAuthorId())
                 .contentTypeId(novel.getContentTypes().stream()
                         .map(ContentType::getId)
                         .collect(Collectors.toList()))

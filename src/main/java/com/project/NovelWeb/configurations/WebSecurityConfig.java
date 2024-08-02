@@ -38,15 +38,14 @@ public class WebSecurityConfig {
 
                          .requestMatchers(GET,
                                  String.format("%s/novel/**", apiPrefix)).permitAll()
-
                          .requestMatchers(POST,
                                  String.format("%s/novel/**", apiPrefix)).hasRole(Role.ADMIN)
-
                          .requestMatchers(DELETE,
                                  String.format("%s/novel/**", apiPrefix)).hasRole(Role.ADMIN)
-
                          .requestMatchers(PUT,
                                  String.format("%s/novel/**", apiPrefix)).hasRole(Role.ADMIN)
+                         .requestMatchers(POST,
+                                 String.format("%s/chapter/**", apiPrefix)).hasAnyRole(Role.POSTER, Role.ADMIN)
                          .anyRequest().authenticated())
 
                  .csrf(AbstractHttpConfigurer::disable);
