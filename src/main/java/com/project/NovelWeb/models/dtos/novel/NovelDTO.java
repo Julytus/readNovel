@@ -1,11 +1,10 @@
-package com.project.NovelWeb.models.dtos;
+package com.project.NovelWeb.models.dtos.novel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 import java.util.List;
-import java.util.Set;
 
 @Setter
 @Getter
@@ -28,4 +27,6 @@ public class NovelDTO {
     private Long posterId;
     @JsonProperty("status")
     private String status;
+    @JsonProperty("author_id")
+    private Long authorId;
 }

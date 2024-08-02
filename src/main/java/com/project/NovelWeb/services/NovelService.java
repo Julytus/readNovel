@@ -1,7 +1,7 @@
 package com.project.NovelWeb.services;
 
-import com.project.NovelWeb.models.dtos.NovelDTO;
-import com.project.NovelWeb.models.entities.Novel.Novel;
+import com.project.NovelWeb.models.dtos.novel.NovelDTO;
+import com.project.NovelWeb.models.entities.novel.Novel;
 import com.project.NovelWeb.responses.novel.NovelResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,4 +20,5 @@ public interface NovelService {
     Novel getNovelById(Long id) throws Exception;
 
     NovelResponse updateNovel(Long id, NovelDTO novelDTO) throws Exception;
+
 }

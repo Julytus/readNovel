@@ -1,4 +1,4 @@
-package com.project.NovelWeb.models.entities.Novel;
+package com.project.NovelWeb.models.entities.novel;
 
 import com.project.NovelWeb.models.entities.BaseEntity;
 import jakarta.persistence.*;

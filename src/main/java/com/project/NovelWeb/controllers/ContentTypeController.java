@@ -3,7 +3,7 @@ package com.project.NovelWeb.controllers;
 import com.project.NovelWeb.models.dtos.ContentTypeDTO;
 import com.project.NovelWeb.exceptions.MethodArgumentNotValidException;
 import com.project.NovelWeb.responses.ResponseObject;
-import com.project.NovelWeb.models.entities.Novel.ContentType;
+import com.project.NovelWeb.models.entities.novel.ContentType;
 import com.project.NovelWeb.responses.ContentTypeResponse;
 import com.project.NovelWeb.services.impl.ContentTypeServiceImp;
 import jakarta.validation.Valid;
