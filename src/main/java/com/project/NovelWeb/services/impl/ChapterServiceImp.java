@@ -1,12 +1,13 @@
 package com.project.NovelWeb.services.impl;
 
 import com.project.NovelWeb.exceptions.DataNotFoundException;
-import com.project.NovelWeb.models.dtos.novel.ChapterDTO;
-import com.project.NovelWeb.models.entities.novel.Chapter;
+import com.project.NovelWeb.mappers.ChapterResponseMapper;
+import com.project.NovelWeb.models.dtos.ChapterDTO;
+import com.project.NovelWeb.models.entities.Chapter;
 import com.project.NovelWeb.models.entities.novel.Novel;
 import com.project.NovelWeb.repositories.ChapterRepository;
 import com.project.NovelWeb.repositories.NovelRepository;
-import com.project.NovelWeb.responses.novel.ChapterResponse;
+import com.project.NovelWeb.responses.ChapterResponse;
 import com.project.NovelWeb.services.ChapterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,12 +34,6 @@ public class ChapterServiceImp implements ChapterService {
         novel.setLastChapterId(chapter.getId());
         novelRepository.save(novel);
 
-        return ChapterResponse.builder()
-                .chapterName(chapter.getName())
-                .chapterNum(chapter.getChapterNum())
-                .novelName(novel.getName())
-                .price(chapter.getPrice())
-                .content(chapter.getContent())
-                .build();
+        return ChapterResponseMapper.fromChapter(chapter, novel);
     }
 }

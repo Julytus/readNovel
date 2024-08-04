@@ -1,8 +1,8 @@
 package com.project.NovelWeb.controllers;
 
 import com.project.NovelWeb.exceptions.MethodArgumentNotValidException;
-import com.project.NovelWeb.models.dtos.novel.ChapterDTO;
-import com.project.NovelWeb.responses.novel.ChapterResponse;
+import com.project.NovelWeb.models.dtos.ChapterDTO;
+import com.project.NovelWeb.responses.ChapterResponse;
 import com.project.NovelWeb.services.ChapterService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.project.NovelWeb.enums;
+package com.project.NovelWeb.utils;
 
 public class EnumUtils {
     public static <E extends Enum<E>> boolean isValidEnum(Class<E> enumClass, String value) {

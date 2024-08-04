@@ -1,6 +1,6 @@
 package com.project.NovelWeb.repositories;
 
-import com.project.NovelWeb.models.entities.novel.Chapter;
+import com.project.NovelWeb.models.entities.Chapter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

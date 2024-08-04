@@ -1,12 +1,12 @@
 package com.project.NovelWeb.controllers;
 
+import com.project.NovelWeb.mappers.UserResponseMapper;
 import com.project.NovelWeb.models.dtos.UserDTO;
 import com.project.NovelWeb.models.dtos.UserLoginDTO;
 import com.project.NovelWeb.exceptions.MethodArgumentNotValidException;
 import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.responses.LoginResponse;
 import com.project.NovelWeb.responses.ResponseObject;
-import com.project.NovelWeb.responses.UserResponse;
 import com.project.NovelWeb.services.UserService;
 import com.project.NovelWeb.utils.localization.LocalizationUtils;
 import com.project.NovelWeb.utils.localization.MessageKeys;
@@ -32,7 +32,7 @@ public class AuthenticationController {
     public ResponseEntity<ResponseObject> register(
             @Valid @RequestBody UserDTO userDTO,
             BindingResult bindingResult
-            ) throws Exception{
+    ) throws Exception{
         if (bindingResult.hasErrors()) {
             throw new MethodArgumentNotValidException(bindingResult);
         }
@@ -49,7 +49,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(ResponseObject
                 .builder()
                 .status(HttpStatus.CREATED)
-                .data(UserResponse.fromUser(user))
+                .data(UserResponseMapper.fromUser(user))
                 .message(localizationUtils.getLocalizedMessage(MessageKeys.REGISTER_SUCCESSFULLY))
                 .build());
     }
@@ -57,7 +57,7 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody UserLoginDTO userLoginDTO
-            ) throws Exception{
+    ) throws Exception{
         //Check info and generate Token
         String token = userService.login(
                 userLoginDTO.getEmail(),

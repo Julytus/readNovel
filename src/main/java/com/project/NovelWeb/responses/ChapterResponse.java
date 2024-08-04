@@ -1,4 +1,4 @@
-package com.project.NovelWeb.responses.novel;
+package com.project.NovelWeb.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.NovelWeb.responses.BaseResponse;

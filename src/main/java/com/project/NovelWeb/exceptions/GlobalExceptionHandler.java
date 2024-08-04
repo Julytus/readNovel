@@ -43,4 +43,24 @@ public class GlobalExceptionHandler {
                 .message(String.join(", ", errors))
                 .build());
     }
+
+    @ExceptionHandler(MaximumMemoryExceededException.class)
+    @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
+    public ResponseObject handleMaximumMemoryExceededException(Exception e) {
+        return new ResponseObject(
+                "IMAGE FILES TOO LARGE",
+                HttpStatus.PAYLOAD_TOO_LARGE,
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler(UnsupportedMediaTypeException.class)
+    @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+    public ResponseObject handleUnsupportedMediaTypeException(Exception e) {
+        return new ResponseObject(
+                "UNSUPPORTED MEDIA TYPE",
+                HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+                e.getMessage()
+        );
+    }
 }

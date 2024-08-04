@@ -19,8 +19,6 @@ public class NovelDTO {
     private String alias;
     @JsonProperty("content")
     private String content;
-    @JsonProperty("image")
-    private String image;
     @JsonProperty("content_type_id")
     private List<Long> contentTypeId;
     @JsonProperty("poster_id")

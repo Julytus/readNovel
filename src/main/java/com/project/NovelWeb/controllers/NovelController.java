@@ -1,7 +1,10 @@
 package com.project.NovelWeb.controllers;
 
+import com.project.NovelWeb.exceptions.DataNotFoundException;
+import com.project.NovelWeb.mappers.NovelResponseMapper;
 import com.project.NovelWeb.models.dtos.novel.NovelDTO;
 import com.project.NovelWeb.exceptions.MethodArgumentNotValidException;
+import com.project.NovelWeb.models.entities.novel.Novel;
 import com.project.NovelWeb.responses.ResponseObject;
 import com.project.NovelWeb.responses.novel.NovelListResponse;
 import com.project.NovelWeb.responses.novel.NovelResponse;
@@ -16,7 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -35,6 +40,16 @@ public class NovelController {
 
         NovelResponse newNovel = novelService.createNovel(novelDTO);
         return ResponseEntity.ok(newNovel);
+    }
+
+    @PostMapping("/upload/{id}")
+    public ResponseEntity<NovelResponse> updateNovelImage(
+            @PathVariable("id") Long novelId,
+            @ModelAttribute("file") MultipartFile file
+    ) throws Exception {
+        Novel existingNovel = novelService.getNovelById(novelId);
+        Novel result = novelService.updateImage(file, existingNovel);
+        return ResponseEntity.ok(NovelResponseMapper.fromNovel(result));
     }
 
 
