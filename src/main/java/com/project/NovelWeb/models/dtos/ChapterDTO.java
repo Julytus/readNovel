@@ -1,4 +1,4 @@
-package com.project.NovelWeb.models.dtos.novel;
+package com.project.NovelWeb.models.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;

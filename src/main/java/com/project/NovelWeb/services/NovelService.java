@@ -1,12 +1,15 @@
 package com.project.NovelWeb.services;
 
+import com.project.NovelWeb.exceptions.DataNotFoundException;
 import com.project.NovelWeb.models.dtos.novel.NovelDTO;
 import com.project.NovelWeb.models.entities.novel.Novel;
 import com.project.NovelWeb.responses.novel.NovelResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.IOException;
 import java.util.List;
 
 public interface NovelService {
@@ -21,4 +24,5 @@ public interface NovelService {
 
     NovelResponse updateNovel(Long id, NovelDTO novelDTO) throws Exception;
 
+    Novel updateImage(MultipartFile file, Novel novel) throws IOException, DataNotFoundException;
 }

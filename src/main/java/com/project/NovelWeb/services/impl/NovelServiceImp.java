@@ -1,6 +1,8 @@
 package com.project.NovelWeb.services.impl;
 
-import com.project.NovelWeb.enums.EnumUtils;
+import com.project.NovelWeb.exceptions.MaximumMemoryExceededException;
+import com.project.NovelWeb.mappers.NovelResponseMapper;
+import com.project.NovelWeb.utils.EnumUtils;
 import com.project.NovelWeb.enums.Status;
 import com.project.NovelWeb.exceptions.DataNotFoundException;
 import com.project.NovelWeb.models.dtos.novel.NovelDTO;
@@ -17,16 +19,29 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class NovelServiceImp implements NovelService {
+    private final NovelRepository novelRepository;
+    private final ContentTypeRepository contentTypeRepository;
+    private final UserRepository userRepository;
+    private static String UPLOADS_FOLDER = "uploads";
     @Override
-    public Novel getNovelById(Long id) throws Exception {
+    public Novel getNovelById(Long id) throws DataNotFoundException {
         Optional<Novel> optionalNovel = novelRepository.getDetailNovel(id);
         if (optionalNovel.isPresent()) {
             return optionalNovel.get();
@@ -34,11 +49,8 @@ public class NovelServiceImp implements NovelService {
         throw new DataNotFoundException("CANNOT_FIND_NOVEL_WITH_ID: " + id);
     }
 
-    private final NovelRepository novelRepository;
-    private final ContentTypeRepository contentTypeRepository;
-    private final UserRepository userRepository;
-
     @Override
+    @Transactional
     public NovelResponse createNovel(NovelDTO novelDTO) throws Exception{
 
         //Get List ContentType for Novel
@@ -76,41 +88,29 @@ public class NovelServiceImp implements NovelService {
                 .name(novelDTO.getName())
                 .alias(novelDTO.getAlias())
                 .content(novelDTO.getContent())
-                .imageUrl(novelDTO.getImage())
                 .status(Status.valueOf(status.toUpperCase()))
                 .contentTypes(contentTypes)
                 .poster(existingUser)
                 .build();
         novelRepository.save(newNovel);
 
-        return NovelResponse.builder()
-                .id(newNovel.getId())
-                .name(newNovel.getName())
-                .content(newNovel.getContent())
-                .image(newNovel.getImageUrl())
-                .posterId(newNovel.getPoster().getId())
-                .status(newNovel.getStatus().toString())
-                .message("CREATE_NOVEL_SUCCESSFULLY")
-                .contentTypeId(newNovel.getContentTypes().stream()
-                        .map(ContentType::getId)
-                        .collect(Collectors.toList()))
-                .build();
+        return NovelResponseMapper.fromNovel(newNovel);
     }
 
     @Override
     public Page<NovelResponse> getAllNovels(PageRequest pageRequest) {
         Page<Novel> novelPage = novelRepository.findAll(pageRequest);
-        return novelPage.map(NovelResponse::fromNovel);
+        return novelPage.map(NovelResponseMapper::fromNovel);
     }
 
     @Override
     public Page<NovelResponse> SearchNovel(String keyword,
-                                            List<Long> contentTypeId,
-                                            PageRequest pageRequest)
+                                           List<Long> contentTypeId,
+                                           PageRequest pageRequest)
     {
         int contentTypeCount = contentTypeId == null ? 0 : contentTypeId.size();
         Page<Novel> novelPage = novelRepository.searchNovels(contentTypeId, keyword,contentTypeCount , pageRequest);
-        return novelPage.map(NovelResponse::fromNovel);
+        return novelPage.map(NovelResponseMapper::fromNovel);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class NovelServiceImp implements NovelService {
             throw new Exception("Invalid status value: " + status);
         }
         Page<Novel> novelPage = novelRepository.findAllByStatus(existingStatus, pageRequest);
-        return novelPage.map(NovelResponse::fromNovel);
+        return novelPage.map(NovelResponseMapper::fromNovel);
     }
 
 
@@ -132,6 +132,7 @@ public class NovelServiceImp implements NovelService {
     }
 
     @Override
+    @Transactional
     public NovelResponse updateNovel(Long novelId, NovelDTO novelDTO) throws Exception {
         Novel existingNovel = getNovelById(novelId);
         if (existingNovel != null) {
@@ -161,9 +162,6 @@ public class NovelServiceImp implements NovelService {
                                         "Cannot find User with id:" + novelDTO.getPosterId()));
                 existingNovel.setPoster(existingUser);
             }
-            if (novelDTO.getImage() != null && !novelDTO.getImage().isEmpty()) {
-                existingNovel.setImageUrl(novelDTO.getImage());
-            }
             if (novelDTO.getContent() != null && !novelDTO.getContent().isEmpty()) {
                 existingNovel.setContent(novelDTO.getContent());
             }
@@ -173,8 +171,40 @@ public class NovelServiceImp implements NovelService {
             }
             existingNovel.setStatus(existingStatus);
             Novel novel = novelRepository.save(existingNovel);
-            return NovelResponse.fromNovel(novel);
+            return NovelResponseMapper.fromNovel(novel);
         }
         return null;
+    }
+
+    private boolean isImageFile(MultipartFile file) {
+        String contentType = file.getContentType();
+        return contentType != null && contentType.startsWith("image/");
+    }
+    @Override
+    public Novel updateImage(MultipartFile file, Novel novel) throws IOException{
+        if (file.getSize() > 5 * 1024 * 1024) {
+            throw new MaximumMemoryExceededException("Image must be smaller than 5MB");
+        }
+        if (!isImageFile(file) || file.getOriginalFilename() == null) {
+            throw new IOException("invalid image format.");
+        }
+
+        String contentType = file.getContentType();
+        if(contentType == null || !contentType.startsWith("image/")) {
+            throw new UnsupportedEncodingException("Payload must be images");
+        }
+
+        String fileName = UUID.randomUUID()+"_"+StringUtils.cleanPath(
+                Objects.requireNonNull(file.getOriginalFilename()));
+        java.nio.file.Path uploadDir = Paths.get(UPLOADS_FOLDER);
+        if (!Files.exists(uploadDir)) {
+            Files.createDirectories(uploadDir);
+        }
+
+        java.nio.file.Path destination = Paths.get(uploadDir.toString(), fileName);
+        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+
+        novel.setImageUrl(fileName);
+        return novelRepository.save(novel);
     }
 }

@@ -26,15 +26,4 @@ public class UserResponse {
 
     @JsonProperty("role")
     private Role role;
-
-    public static UserResponse fromUser(User user) {
-        return UserResponse
-                .builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .fullName(user.getFullName())
-                .active(user.isActive())
-                .role(user.getRole())
-                .build();
-    }
 }
