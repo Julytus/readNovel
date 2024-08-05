@@ -26,8 +26,8 @@ public interface NovelRepository extends JpaRepository<Novel, Long> {
             "WHERE (:contentTypeId IS NULL OR ct.id IN :contentTypeId) " +
             "AND (:keyword IS NULL OR :keyword = '' OR n.name LIKE %:keyword%)" +
             "GROUP BY n.id " +
-            "HAVING COUNT(DISTINCT ct.id) = :contentTypeCount")
-
+            "HAVING COUNT(DISTINCT ct.id) = CASE WHEN :contentTypeCount = 0 " +
+            "THEN COUNT(DISTINCT ct.id) ELSE :contentTypeCount END")
     Page<Novel> searchNovels(
             @Param("contentTypeId") List<Long> contentTypeId,
             @Param("keyword") String keyword,
