@@ -6,4 +6,5 @@ import com.project.NovelWeb.responses.ChapterResponse;
 
 public interface ChapterService {
     ChapterResponse createChapter(ChapterDTO chapterDTO) throws DataNotFoundException;
+    void deleteChapter(Integer chapterId) throws DataNotFoundException;
 }

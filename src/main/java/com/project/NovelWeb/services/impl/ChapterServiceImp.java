@@ -36,4 +36,17 @@ public class ChapterServiceImp implements ChapterService {
 
         return ChapterResponseMapper.fromChapter(chapter, novel);
     }
+
+    @Override
+    public void deleteChapter(Integer chapterId) throws DataNotFoundException {
+        Chapter chapter = chapterRepository.findById(chapterId)
+                .orElseThrow(() -> new DataNotFoundException("Chapter Not Found"));
+        Novel novel = chapter.getNovel();
+        chapterRepository.delete(chapter);
+
+        Chapter lastChapter = chapterRepository.findTopByNovelOrderByIdDesc(novel);
+        novel.setLastChapterId(lastChapter != null ? lastChapter.getId() : null);
+        novelRepository.save(novel);
+
+    }
 }

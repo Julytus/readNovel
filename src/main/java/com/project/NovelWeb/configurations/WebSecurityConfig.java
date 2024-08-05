@@ -46,6 +46,8 @@ public class WebSecurityConfig {
                                  String.format("%s/novel/**", apiPrefix)).hasRole(Role.ADMIN)
                          .requestMatchers(POST,
                                  String.format("%s/chapter/**", apiPrefix)).hasAnyRole(Role.POSTER, Role.ADMIN)
+                         .requestMatchers(DELETE,
+                                 String.format("%s/chapter/**", apiPrefix)).hasAnyRole(Role.POSTER, Role.ADMIN)
                          .anyRequest().authenticated())
 
                  .csrf(AbstractHttpConfigurer::disable);
