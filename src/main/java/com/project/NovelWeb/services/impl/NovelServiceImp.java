@@ -39,7 +39,7 @@ public class NovelServiceImp implements NovelService {
     private final NovelRepository novelRepository;
     private final ContentTypeRepository contentTypeRepository;
     private final UserRepository userRepository;
-    private static String UPLOADS_FOLDER = "uploads";
+    private static final String UPLOADS_FOLDER = "uploads";
     @Override
     public Novel getNovelById(Long id) throws DataNotFoundException {
         Optional<Novel> optionalNovel = novelRepository.getDetailNovel(id);
@@ -108,7 +108,11 @@ public class NovelServiceImp implements NovelService {
                                            List<Long> contentTypeId,
                                            PageRequest pageRequest)
     {
-        int contentTypeCount = contentTypeId == null ? 0 : contentTypeId.size();
+        int contentTypeCount = (contentTypeId == null) ? 0 : contentTypeId.size();
+        if (contentTypeCount == 0) {
+            Page<Novel> novelPage = novelRepository.searchNovels(null, keyword,contentTypeCount , pageRequest);
+            return novelPage.map(NovelResponseMapper::fromNovel);
+        }
         Page<Novel> novelPage = novelRepository.searchNovels(contentTypeId, keyword,contentTypeCount , pageRequest);
         return novelPage.map(NovelResponseMapper::fromNovel);
     }
