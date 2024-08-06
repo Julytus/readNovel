@@ -63,4 +63,14 @@ public class GlobalExceptionHandler {
                 e.getMessage()
         );
     }
+
+    @ExceptionHandler(ExpiredTokenException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseObject handleExpiredTokenException(Exception e) {
+        return new ResponseObject(
+                "EXPIRED TOKEN",
+                HttpStatus.UNAUTHORIZED,
+                e.getMessage()
+        );
+    }
 }

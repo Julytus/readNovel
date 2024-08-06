@@ -1,9 +1,7 @@
 package com.project.NovelWeb.models.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.NovelWeb.enums.Status;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Setter
@@ -26,8 +24,6 @@ public class UserDTO {
     @JsonProperty("retype_password")
     private String retypePassword;
 
-    @NotNull(message = "Role Id is required!")
     @JsonProperty("role_id")
     private Long roleId;
-
 }

@@ -1,5 +1,6 @@
 package com.project.NovelWeb.utils.jwt;
 
+import com.project.NovelWeb.models.entities.Token;
 import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.repositories.TokenRepository;
 import io.jsonwebtoken.*;
@@ -36,7 +37,7 @@ public class JwtTokenUtils {
             String token = Jwts.builder()
                     .setClaims(claims)
                     .setSubject(user.getEmail())
-                    .setExpiration(new Date(System.currentTimeMillis() + expiration + 1000L))
+                    .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000L))
                     .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                     .compact();
             return token;
@@ -72,15 +73,18 @@ public class JwtTokenUtils {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public boolean validateToken(String token, User user) {
+    public boolean validateToken(String token, User user) throws Exception {
 //        try {
 //            String email = extractEmail(token);
 //            Token existingToken = tokenRepository.findByToken(token);
 //            if (existingToken == null ||
 //                    existingToken.isRevoked() ||
-//                    !user.isActive()) {
+//                    !user.isActive()
+//            ) {
 //                return false;
 //            }
+//            return (email.equals(user.getUsername()))
+//                    && !isTokenExpired(token);
 //        } catch (MalformedJwtException e) {
 //            throw new Exception("Invalid JWT token. error: " + e.getMessage());
 //        } catch (ExpiredJwtException e) {
@@ -88,10 +92,10 @@ public class JwtTokenUtils {
 //        } catch (UnsupportedJwtException e) {
 //            throw new Exception("JWT token is unsupported, error: " + e.getMessage());
 //        }
-//        return false;
         String email = extractEmail(token);
         return (email.equals(user.getUsername()))
                 && !isTokenExpired(token);
+
     }
 
 }
