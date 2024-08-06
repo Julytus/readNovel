@@ -10,13 +10,13 @@ import lombok.*;
 @Getter
 @Setter
 public class UpdateUserDTO {
-    @JsonProperty("fullname")
+    @JsonProperty("full_name")
     private String fullName;
 
     @JsonProperty("email")
     private String email;
 
-    @JsonProperty("password")
+    @JsonProperty("new_password")
     private String newPassword;
 
     @JsonProperty("retype_password")

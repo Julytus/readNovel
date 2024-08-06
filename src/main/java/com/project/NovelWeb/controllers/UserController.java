@@ -53,7 +53,7 @@ public class UserController {
                 .data(userListResponse)
                 .build());
     }
-    @PostMapping("/details")
+    @GetMapping("/detail")
     public ResponseEntity<ResponseObject> getUserDetail(
             @RequestHeader("Authorization") String authorizationHeader
     ) throws DataNotFoundException, ExpiredTokenException {
@@ -68,7 +68,7 @@ public class UserController {
         );
     }
 
-    @PutMapping("/details/{userId}")
+    @PutMapping("/detail/{userId}")
     public ResponseEntity<ResponseObject> updateUserDetails(
             @PathVariable Long userId,
             @RequestBody UpdateUserDTO updatedUserDTO,

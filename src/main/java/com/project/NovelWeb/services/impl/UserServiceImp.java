@@ -108,7 +108,7 @@ public class UserServiceImp implements UserService {
                 .orElseThrow(() -> new DataNotFoundException("User not found"));
 
         //Check current Password
-        if(!passwordEncoder.matches(updateUserDTO.getCurrentPassword(), existingUser.getPassword())) {
+            if(!passwordEncoder.matches(updateUserDTO.getCurrentPassword(), existingUser.getPassword())) {
             throw new BadCredentialsException(localizationUtils.getLocalizedMessage(MessageKeys.WRONG_PASSWORD));
         }
         //Check email already exists

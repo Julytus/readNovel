@@ -35,11 +35,14 @@ public class WebSecurityConfig {
                          .requestMatchers(
                                  String.format("%s/auth/login", apiPrefix),
                                  String.format("%s/auth/register", apiPrefix)).permitAll()
-
+                         .requestMatchers(GET,
+                                 String.format("%s/user/all", apiPrefix)).hasRole(Role.ADMIN)
+                         .requestMatchers(GET,
+                                 String.format("%s/user/detail", apiPrefix)).permitAll()
+                         .requestMatchers(PUT,
+                                 String.format("%s/user/detail", apiPrefix)).permitAll()
                          .requestMatchers(GET,
                                  String.format("%s/novel/**", apiPrefix)).permitAll()
-                         .requestMatchers(GET,
-                                 String.format("%s/user/**", apiPrefix)).hasRole(Role.ADMIN)
                          .requestMatchers(POST,
                                  String.format("%s/novel/**", apiPrefix)).hasRole(Role.ADMIN)
                          .requestMatchers(DELETE,
