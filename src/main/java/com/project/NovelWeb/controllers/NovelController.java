@@ -11,10 +11,12 @@ import com.project.NovelWeb.responses.novel.NovelResponse;
 import com.project.NovelWeb.services.NovelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -124,5 +127,27 @@ public class NovelController {
                 .message(String.format("Novel with id = %d updated successfully", id))
                 .status(HttpStatus.OK)
                 .build());
+    }
+
+    @GetMapping("/image/{id}")
+    public ResponseEntity<?> viewImage(@PathVariable Long id) {
+        try {
+            Novel novel = novelService.getNovelById(id);
+
+            java.nio.file.Path imagePath = Paths.get("uploads/"+novel.getImageUrl());
+            UrlResource resource = new UrlResource(imagePath.toUri());
+
+            if (resource.exists()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(resource);
+            } else {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(new UrlResource(Paths.get("uploads/notfound.jpeg").toUri()));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
