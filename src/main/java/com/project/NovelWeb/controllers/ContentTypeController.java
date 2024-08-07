@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class ContentTypeController {
     private final ContentTypeServiceImp contentTypeServiceImp;
 
     @PostMapping("")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ContentTypeResponse> createContentType(
             @Valid @RequestBody ContentTypeDTO contentTypeDTO,
             BindingResult bindingResult) throws MethodArgumentNotValidException {
@@ -58,18 +60,20 @@ public class ContentTypeController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ResponseObject> updateContentType(
             @PathVariable("id") Long id,
             @Valid @RequestBody ContentTypeDTO contentTypeDTO
     ) {
         contentTypeServiceImp.updateContentType(contentTypeDTO, id);
         return ResponseEntity.ok(ResponseObject.builder()
-                        .message("UPDATE_CATEGORY_SUCCESSFULLY.")
+                        .message("UPDATE_CONTENT_TYPE_SUCCESSFULLY.")
                         .data(contentTypeServiceImp.getContentTypeById(id))
                         .build());
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ResponseObject> deleteContentType(
             @PathVariable("id") long id
     ) throws ChangeSetPersister.NotFoundException {

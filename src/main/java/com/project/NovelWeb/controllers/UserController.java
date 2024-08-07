@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +27,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<ResponseObject> searchUser(
             @RequestParam(defaultValue = "", required = false) String keyword,
@@ -54,6 +56,7 @@ public class UserController {
                 .data(userListResponse)
                 .build());
     }
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_POSTER') or hasRole('ROLE_USER')")
     @GetMapping("/detail")
     public ResponseEntity<ResponseObject> getUserDetail(
             @RequestHeader("Authorization") String authorizationHeader
@@ -70,6 +73,7 @@ public class UserController {
     }
 
     @PutMapping("/detail/{userId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_POSTER') or hasRole('ROLE_USER')")
     public ResponseEntity<ResponseObject> updateUserDetails(
             @PathVariable Long userId,
             @RequestBody UpdateUserDTO updatedUserDTO,
@@ -92,6 +96,7 @@ public class UserController {
     }
 
     @PostMapping("/avatar_upload/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_POSTER') or hasRole('ROLE_USER')")
     public ResponseEntity<UserResponse> updateAvatar(
             @PathVariable("id") Long userId,
             @ModelAttribute("file") MultipartFile file,
