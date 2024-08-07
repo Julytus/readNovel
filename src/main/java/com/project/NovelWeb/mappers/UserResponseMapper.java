@@ -10,6 +10,7 @@ public class UserResponseMapper {
                 .id(user.getId())
                 .email(user.getEmail())
                 .fullName(user.getFullName())
+                .avatar(user.getAvatar())
                 .active(user.isActive())
                 .role(user.getRole())
                 .build();

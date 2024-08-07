@@ -14,16 +14,20 @@ public class UserResponse {
     @JsonProperty("id")
     private Long id;
 
-    @JsonProperty("fullname")
+    @JsonProperty("full_name")
     private String fullName;
 
 
     @JsonProperty("is_active")
     private boolean active;
 
+    @JsonProperty("avatar")
+    private String avatar;
+
     @JsonProperty("email")
     private String email;
 
     @JsonProperty("role")
     private Role role;
+
 }

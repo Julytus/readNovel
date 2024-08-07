@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
@@ -88,5 +89,22 @@ public class UserController {
                         .status(HttpStatus.OK)
                         .build()
         );
+    }
+
+    @PostMapping("/avatar_upload/{id}")
+    public ResponseEntity<UserResponse> updateAvatar(
+            @PathVariable("id") Long userId,
+            @ModelAttribute("file") MultipartFile file,
+            @RequestHeader("Authorization") String authorizationHeader
+    ) throws Exception {
+        String extractedToken = authorizationHeader.substring(7);
+        User user = userService.getUserDetailsFromToken(extractedToken);
+        // Ensure that the user making the request matches the user being updated
+        if (!Objects.equals(user.getId(), userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        user = userService.updateAvatar(user, file);
+        return ResponseEntity.ok(UserResponseMapper.fromUser(user));
     }
 }

@@ -51,8 +51,8 @@ public class NovelController {
             @ModelAttribute("file") MultipartFile file
     ) throws Exception {
         Novel existingNovel = novelService.getNovelById(novelId);
-        Novel result = novelService.updateImage(file, existingNovel);
-        return ResponseEntity.ok(NovelResponseMapper.fromNovel(result));
+        existingNovel = novelService.updateImage(file, existingNovel);
+        return ResponseEntity.ok(NovelResponseMapper.fromNovel(existingNovel));
     }
 
 
