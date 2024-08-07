@@ -8,7 +8,7 @@ import org.springframework.web.servlet.LocaleResolver;
 
 import java.util.Locale;
 
-import static com.project.NovelWeb.utils.WebUtils.getCurrentRequest;
+import static com.project.NovelWeb.utils.WebUtil.getCurrentRequest;
 
 @RequiredArgsConstructor
 @Component

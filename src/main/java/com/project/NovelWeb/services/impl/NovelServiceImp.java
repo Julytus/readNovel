@@ -1,37 +1,29 @@
 package com.project.NovelWeb.services.impl;
 
-import com.project.NovelWeb.exceptions.MaximumMemoryExceededException;
-import com.project.NovelWeb.mappers.NovelResponseMapper;
-import com.project.NovelWeb.utils.EnumUtils;
 import com.project.NovelWeb.enums.Status;
 import com.project.NovelWeb.exceptions.DataNotFoundException;
+import com.project.NovelWeb.mappers.NovelResponseMapper;
 import com.project.NovelWeb.models.dtos.novel.NovelDTO;
+import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.models.entities.novel.ContentType;
 import com.project.NovelWeb.models.entities.novel.Novel;
-import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.repositories.ContentTypeRepository;
 import com.project.NovelWeb.repositories.NovelRepository;
 import com.project.NovelWeb.repositories.UserRepository;
 import com.project.NovelWeb.responses.novel.NovelResponse;
 import com.project.NovelWeb.services.NovelService;
+import com.project.NovelWeb.utils.EnumUtil;
+import com.project.NovelWeb.utils.FileUploadUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,7 +32,7 @@ public class NovelServiceImp implements NovelService {
     private final NovelRepository novelRepository;
     private final ContentTypeRepository contentTypeRepository;
     private final UserRepository userRepository;
-    private static final String UPLOADS_FOLDER = "uploads";
+    private static final String UPLOADS_FOLDER = "uploads/novel_images";
     @Override
     public Novel getNovelById(Long id) throws DataNotFoundException {
         Optional<Novel> optionalNovel = novelRepository.getDetailNovel(id);
@@ -80,7 +72,7 @@ public class NovelServiceImp implements NovelService {
             novelDTO.setStatus("ONGOING");
         }
 
-        if (!EnumUtils.isValidEnum(Status.class, status)) {
+        if (!EnumUtil.isValidEnum(Status.class, status)) {
             throw new Exception("Invalid status value: " + status);
         }
 
@@ -121,7 +113,7 @@ public class NovelServiceImp implements NovelService {
     @Override
     public Page<NovelResponse> findAllByStatus(String status, PageRequest pageRequest) throws Exception {
         Status existingStatus = Status.valueOf(status.toUpperCase());
-        if (!EnumUtils.isValidEnum(Status.class, status)) {
+        if (!EnumUtil.isValidEnum(Status.class, status)) {
             throw new Exception("Invalid status value: " + status);
         }
         Page<Novel> novelPage = novelRepository.findAllByStatus(existingStatus, pageRequest);
@@ -171,7 +163,7 @@ public class NovelServiceImp implements NovelService {
                 existingNovel.setContent(novelDTO.getContent());
             }
             Status existingStatus = Status.valueOf(novelDTO.getStatus().toUpperCase());
-            if (!EnumUtils.isValidEnum(Status.class, novelDTO.getStatus())) {
+            if (!EnumUtil.isValidEnum(Status.class, novelDTO.getStatus())) {
                 throw new Exception("Invalid status value: " + novelDTO.getStatus());
             }
             existingNovel.setStatus(existingStatus);
@@ -181,37 +173,9 @@ public class NovelServiceImp implements NovelService {
         return null;
     }
 
-    private boolean isImageFile(MultipartFile file) {
-        String contentType = file.getContentType();
-        return contentType != null && contentType.startsWith("image/");
-    }
     @Override
     public Novel updateImage(MultipartFile file, Novel novel) throws IOException{
-        if (file.getSize() > 5 * 1024 * 1024) {
-            throw new MaximumMemoryExceededException("Image must be smaller than 5MB");
-        }
-        if (!isImageFile(file) || file.getOriginalFilename() == null) {
-            throw new IOException("invalid image format.");
-        }
-
-        String contentType = file.getContentType();
-        if(contentType == null || !contentType.startsWith("image/")) {
-            throw new UnsupportedEncodingException("Payload must be images");
-        }
-
-        String fileName = UUID.randomUUID()+"_"+StringUtils.cleanPath(
-                Objects.requireNonNull(file.getOriginalFilename()));
-        java.nio.file.Path uploadDir = Paths.get(UPLOADS_FOLDER);
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectories(uploadDir);
-        }
-
-        java.nio.file.Path destination = Paths.get(uploadDir.toString(), fileName);
-        try (InputStream inputStream = file.getInputStream()) {
-            Files.copy(inputStream, destination, StandardCopyOption.REPLACE_EXISTING);
-        }
-
-        novel.setImageUrl(fileName);
+        FileUploadUtil.updateImage(novel, file, UPLOADS_FOLDER, novel.getId());
         return novelRepository.save(novel);
     }
 }

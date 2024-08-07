@@ -36,6 +36,12 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "is_active")
     private boolean active;
 
+    @Column(name = "avatar")
+    private String avatar;
+
+    @Column(name = "balance")
+    private Float balance;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;

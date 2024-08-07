@@ -41,6 +41,8 @@ public class WebSecurityConfig {
                                  String.format("%s/user/detail", apiPrefix)).permitAll()
                          .requestMatchers(PUT,
                                  String.format("%s/user/detail", apiPrefix)).permitAll()
+                         .requestMatchers(POST,
+                                 String.format("%s/user/avatar/**", apiPrefix)).permitAll()
                          .requestMatchers(GET,
                                  String.format("%s/novel/**", apiPrefix)).permitAll()
                          .requestMatchers(POST,

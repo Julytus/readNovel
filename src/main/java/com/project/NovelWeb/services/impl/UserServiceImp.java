@@ -1,11 +1,10 @@
 package com.project.NovelWeb.services.impl;
 
 import com.project.NovelWeb.exceptions.ExpiredTokenException;
-import com.project.NovelWeb.mappers.UserResponseMapper;
 import com.project.NovelWeb.models.dtos.novel.UpdateUserDTO;
 import com.project.NovelWeb.models.entities.Token;
 import com.project.NovelWeb.repositories.TokenRepository;
-import com.project.NovelWeb.responses.UserResponse;
+import com.project.NovelWeb.utils.FileUploadUtil;
 import com.project.NovelWeb.utils.jwt.JwtTokenUtils;
 import com.project.NovelWeb.models.dtos.UserDTO;
 import com.project.NovelWeb.exceptions.DataNotFoundException;
@@ -27,7 +26,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +42,7 @@ public class UserServiceImp implements UserService {
     private final JwtTokenUtils jwtTokenUtils;
     private final LocalizationUtils localizationUtils;
     private final TokenRepository tokenRepository;
+    private static final String UPLOADS_FOLDER = "uploads/user_avatars";
     @Override
     public User createUser(UserDTO userDTO) throws Exception {
         String email = userDTO.getEmail();
@@ -103,12 +105,17 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public User updateUser(Long userId, UpdateUserDTO updateUserDTO) throws DataNotFoundException {
-        User existingUser = userRepository.findById(userId)
+    public User getUserById(Long id) throws DataNotFoundException {
+        return userRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("User not found"));
+    }
+
+    @Override
+    public User updateUser(Long userId, UpdateUserDTO updateUserDTO) throws DataNotFoundException {
+        User existingUser = getUserById(userId);
 
         //Check current Password
-            if(!passwordEncoder.matches(updateUserDTO.getCurrentPassword(), existingUser.getPassword())) {
+        if(!passwordEncoder.matches(updateUserDTO.getCurrentPassword(), existingUser.getPassword())) {
             throw new BadCredentialsException(localizationUtils.getLocalizedMessage(MessageKeys.WRONG_PASSWORD));
         }
         //Check email already exists
@@ -161,5 +168,11 @@ public class UserServiceImp implements UserService {
     @Override
     public Page<User> searchUser(String keyword, Pageable pageable) {
         return userRepository.searchUser(keyword, pageable);
+    }
+
+    @Override
+    public User updateAvatar(User user, MultipartFile file) throws IOException {
+        FileUploadUtil.updateImage(user, file, UPLOADS_FOLDER, user.getId());
+        return userRepository.save(user);
     }
 }
