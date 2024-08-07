@@ -32,14 +32,16 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService());
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return authenticationProvider;
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config
+    ) throws Exception {
         return config.getAuthenticationManager();
     }
 }

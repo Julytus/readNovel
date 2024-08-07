@@ -1,6 +1,7 @@
 package com.project.NovelWeb.services.impl;
 
 import com.project.NovelWeb.exceptions.ExpiredTokenException;
+import com.project.NovelWeb.models.dtos.UserLoginDTO;
 import com.project.NovelWeb.models.dtos.novel.UpdateUserDTO;
 import com.project.NovelWeb.models.entities.Token;
 import com.project.NovelWeb.repositories.TokenRepository;
@@ -73,32 +74,44 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public String login(String email, String password, Long roleId) throws Exception {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+    public String login(UserLoginDTO userLoginDTO) throws Exception {
+        Optional<User> optionalUser = Optional.empty();
+        String subject = null;
+
+        //CheckGmail,Fb...
+        //Code
+
+        if (userLoginDTO.getEmail() != null && !userLoginDTO.getEmail().isBlank()) {
+            optionalUser = userRepository.findByEmail(userLoginDTO.getEmail());
+            subject = userLoginDTO.getEmail();
+        }
         if (optionalUser.isEmpty()) {
             throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.EMAIL_DOES_NOT_EXISTS));
         }
+
         User existingUser = optionalUser.get();
-        //check Pass
-        if(!passwordEncoder.matches(password, existingUser.getPassword())) {
-            throw new BadCredentialsException(localizationUtils.getLocalizedMessage(MessageKeys.WRONG_PASSWORD));
-        }
-
-        //check Role
-        Optional<Role> optionalRole = roleRepository.findById(roleId);
-        if(optionalRole.isEmpty() || !roleId.equals(existingUser.getRole().getId())) {
-            throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.ROLE_NOT_EXIST));
-        }
-
+        // Check if the user account is active
         if(!optionalUser.get().isActive()) {
             throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.USER_IS_LOCKED));
         }
 
+        //check Pass
+        if(!passwordEncoder.matches(userLoginDTO.getPassword(), existingUser.getPassword())) {
+            throw new BadCredentialsException(localizationUtils.getLocalizedMessage(MessageKeys.WRONG_PASSWORD));
+        }
+
+        //check Role
+        Optional<Role> optionalRole = roleRepository.findById(userLoginDTO.getRoleId());
+        if(optionalRole.isEmpty() || !userLoginDTO.getRoleId().equals(existingUser.getRole().getId())) {
+            throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.ROLE_NOT_EXIST));
+        }
+
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                email, password,
+                subject,
+                userLoginDTO.isPasswordBlank()  ? "" : userLoginDTO.getPassword(),
                 existingUser.getAuthorities()
         );
-
+        //authenticate with Java Spring security
         authenticationManager.authenticate(authenticationToken);
         ///Return Token
         return jwtTokenUtils.generateToken(existingUser);
@@ -151,6 +164,11 @@ public class UserServiceImp implements UserService {
             throw new DataNotFoundException("User not found");
         }
     }
+    @Override
+    public User getUserDetailsFromRefreshToken(String refreshToken) throws Exception {
+        Token existingToken = tokenRepository.findByRefreshToken(refreshToken);
+        return getUserDetailsFromToken(existingToken.getToken());
+    }
 
     @Override
     @Transactional
@@ -174,5 +192,13 @@ public class UserServiceImp implements UserService {
     public User updateAvatar(User user, MultipartFile file) throws IOException {
         FileUploadUtil.updateImage(user, file, UPLOADS_FOLDER, user.getId());
         return userRepository.save(user);
+    }
+    @Override
+    @Transactional
+    public void blockOrEnable(Long userId, Boolean active) throws DataNotFoundException {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User not found"));
+        existingUser.setActive(active);
+        userRepository.save(existingUser);
     }
 }

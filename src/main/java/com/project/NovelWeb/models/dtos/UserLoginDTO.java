@@ -21,7 +21,10 @@ public class UserLoginDTO {
     @NotBlank(message = "password cannot be blank!")
     private String password;
 
-    @Min(value = 1, message = "You must enter role's Id, 1. User, 2. Admin")
+    @Min(value = 1, message = "You must enter role's Id, 1. User, 2. Admin, 3. Poster")
     @JsonProperty("role_id")
-    private Long roleId;
-}
+    private Long roleId = 1L;
+
+    public boolean isPasswordBlank() {
+        return password == null || password.trim().isEmpty();
+    }}

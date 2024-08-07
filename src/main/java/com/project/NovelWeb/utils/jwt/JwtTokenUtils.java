@@ -31,16 +31,16 @@ public class JwtTokenUtils {
 
     public String generateToken(com.project.NovelWeb.models.entities.User user) throws Exception{
         Map<String, Object> claims = new HashMap<>();
+
         claims.put("email", user.getEmail());
         claims.put("userId", user.getId());
         try {
-            String token = Jwts.builder()
+            return Jwts.builder()
                     .setClaims(claims)
                     .setSubject(user.getEmail())
                     .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000L))
                     .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                     .compact();
-            return token;
         } catch (Exception e) {
             throw new Exception("Cannot create jwt token, error :" + e.getMessage());
         }
@@ -74,28 +74,24 @@ public class JwtTokenUtils {
     }
 
     public boolean validateToken(String token, User user) throws Exception {
-//        try {
-//            String email = extractEmail(token);
-//            Token existingToken = tokenRepository.findByToken(token);
-//            if (existingToken == null ||
-//                    existingToken.isRevoked() ||
-//                    !user.isActive()
-//            ) {
-//                return false;
-//            }
-//            return (email.equals(user.getUsername()))
-//                    && !isTokenExpired(token);
-//        } catch (MalformedJwtException e) {
-//            throw new Exception("Invalid JWT token. error: " + e.getMessage());
-//        } catch (ExpiredJwtException e) {
-//            throw new Exception("JWT token is expired, error: " +  e.getMessage());
-//        } catch (UnsupportedJwtException e) {
-//            throw new Exception("JWT token is unsupported, error: " + e.getMessage());
-//        }
-        String email = extractEmail(token);
-        return (email.equals(user.getUsername()))
-                && !isTokenExpired(token);
-
+        try {
+            String email = extractEmail(token);
+            Token existingToken = tokenRepository.findByToken(token);
+            if (existingToken == null ||
+                    existingToken.isRevoked() ||
+                    !user.isActive()
+            ) {
+                return false;
+            }
+            return (email.equals(user.getUsername()))
+                    && !isTokenExpired(token);
+        } catch (MalformedJwtException e) {
+            throw new Exception("Invalid JWT token. error: " + e.getMessage());
+        } catch (ExpiredJwtException e) {
+            throw new Exception("JWT token is expired, error: " +  e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            throw new Exception("JWT token is unsupported, error: " + e.getMessage());
+        }
     }
 
 }

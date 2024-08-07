@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,7 @@ public class NovelController {
     private final NovelService novelService;
     @PostMapping("")
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<NovelResponse> createNovel(
             @Valid @RequestBody NovelDTO novelDTO,
             BindingResult bindingResult) throws Exception {
@@ -46,6 +48,7 @@ public class NovelController {
     }
 
     @PostMapping("/upload/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_POSTER')")
     public ResponseEntity<NovelResponse> updateNovelImage(
             @PathVariable("id") Long novelId,
             @ModelAttribute("file") MultipartFile file
@@ -105,6 +108,7 @@ public class NovelController {
 
     @DeleteMapping("/{id}")
     @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ResponseObject> deleteNovel(@PathVariable Long id) {
         novelService.deleteNovel(id);
         return ResponseEntity.ok(ResponseObject
@@ -116,6 +120,7 @@ public class NovelController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_POSTER')")
     public ResponseEntity<ResponseObject> updateNovel(
             @PathVariable Long id,
             @Valid @RequestBody NovelDTO novelDTO
@@ -130,7 +135,7 @@ public class NovelController {
     }
 
     @GetMapping("/image/{id}")
-    public ResponseEntity<?> viewImage(@PathVariable Long id) {
+    public ResponseEntity<?> viewNovelImage(@PathVariable Long id) {
         try {
             Novel novel = novelService.getNovelById(id);
 
@@ -144,7 +149,7 @@ public class NovelController {
             } else {
                 return ResponseEntity.ok()
                         .contentType(MediaType.IMAGE_JPEG)
-                        .body(new UrlResource(Paths.get("uploads/notfound.jpeg").toUri()));
+                        .body(new UrlResource(Paths.get("uploads/image-not-found.jpg").toUri()));
             }
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
