@@ -1,9 +1,9 @@
 package com.project.NovelWeb.models.dtos.novel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Setter
@@ -11,17 +11,15 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class NovelDTO {
-    @NotEmpty(message = "Name cannot be empty!")
+public class UpdateNovelDTO {
     @JsonProperty("name")
     private String name;
     @JsonProperty("alias")
     private String alias;
-    @NotEmpty(message = "Content cannot be empty!")
     @JsonProperty("content")
     private String content;
     @JsonProperty("content_type_id")
-    private List<Long> contentTypeId;
+    private List<Long> contentTypeId = new ArrayList<>();;
     @JsonProperty("poster_id")
     private Long posterId;
     @JsonProperty("status")

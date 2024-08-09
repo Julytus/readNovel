@@ -2,7 +2,7 @@ package com.project.NovelWeb.services.impl;
 
 import com.project.NovelWeb.exceptions.ExpiredTokenException;
 import com.project.NovelWeb.models.dtos.UserLoginDTO;
-import com.project.NovelWeb.models.dtos.novel.UpdateUserDTO;
+import com.project.NovelWeb.models.dtos.UpdateUserDTO;
 import com.project.NovelWeb.models.entities.Token;
 import com.project.NovelWeb.repositories.TokenRepository;
 import com.project.NovelWeb.utils.FileUploadUtil;

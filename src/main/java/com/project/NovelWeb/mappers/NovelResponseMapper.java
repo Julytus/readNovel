@@ -4,12 +4,11 @@ import com.project.NovelWeb.models.entities.novel.ContentType;
 import com.project.NovelWeb.models.entities.novel.Novel;
 import com.project.NovelWeb.responses.novel.NovelResponse;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class NovelResponseMapper {
     public static NovelResponse fromNovel(Novel novel) {
-        return NovelResponse
+        NovelResponse novelResponse = NovelResponse
                 .builder()
                 .id(novel.getId())
                 .name(novel.getName())
@@ -24,6 +23,9 @@ public class NovelResponseMapper {
                         .collect(Collectors.toList()))
                 .message("SUCCESSFULLY")
                 .build();
+        novelResponse.setCreatedAt(novel.getCreatedAt());
+        novelResponse.setUpdatedAt(novel.getUpdatedAt());
+        return novelResponse;
     }
 
 //    public static List<NovelResponse> fromNovelList(List<Novel> novels) {

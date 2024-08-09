@@ -20,3 +20,4 @@ jwt:
   expiration: 2592000
   expiration-refresh-token: 5184000 #60 days = 60 * 24 * 60 * 60
   secretKey: TuAnD3pZa1V0D1ch=/ChuaT3DePZa1V0Dick+T84IABv
+

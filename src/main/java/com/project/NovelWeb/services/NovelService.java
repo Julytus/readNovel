@@ -2,6 +2,7 @@ package com.project.NovelWeb.services;
 
 import com.project.NovelWeb.exceptions.DataNotFoundException;
 import com.project.NovelWeb.models.dtos.novel.NovelDTO;
+import com.project.NovelWeb.models.dtos.novel.UpdateNovelDTO;
 import com.project.NovelWeb.models.entities.novel.Novel;
 import com.project.NovelWeb.responses.novel.NovelResponse;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,7 @@ public interface NovelService {
 
     Novel getNovelById(Long id) throws Exception;
 
-    NovelResponse updateNovel(Long id, NovelDTO novelDTO) throws Exception;
+    NovelResponse updateNovel(Long id, UpdateNovelDTO updateNovelDTO) throws Exception;
 
     Novel updateImage(MultipartFile file, Novel novel) throws IOException, DataNotFoundException;
 }

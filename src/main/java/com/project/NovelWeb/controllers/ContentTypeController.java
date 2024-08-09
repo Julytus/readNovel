@@ -1,10 +1,9 @@
 package com.project.NovelWeb.controllers;
 
 import com.project.NovelWeb.models.dtos.novel.ContentTypeDTO;
-import com.project.NovelWeb.exceptions.MethodArgumentNotValidException;
-import com.project.NovelWeb.responses.ResponseObject;
 import com.project.NovelWeb.models.entities.novel.ContentType;
 import com.project.NovelWeb.responses.ContentTypeResponse;
+import com.project.NovelWeb.responses.ResponseObject;
 import com.project.NovelWeb.services.impl.ContentTypeServiceImp;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,6 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,12 +24,9 @@ public class ContentTypeController {
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ContentTypeResponse> createContentType(
-            @Valid @RequestBody ContentTypeDTO contentTypeDTO,
-            BindingResult bindingResult) throws MethodArgumentNotValidException {
+            @Valid @RequestBody ContentTypeDTO contentTypeDTO) {
         ContentTypeResponse contentTypeResponse = new ContentTypeResponse();
-        if (bindingResult.hasErrors()) {
-            throw new MethodArgumentNotValidException(bindingResult);
-        }
+
         ContentType contentType = contentTypeServiceImp.createContentType(contentTypeDTO);
         contentTypeResponse.setContentType(contentType);
         return ResponseEntity.ok(contentTypeResponse);

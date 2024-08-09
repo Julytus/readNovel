@@ -4,6 +4,7 @@ import com.project.NovelWeb.enums.Status;
 import com.project.NovelWeb.exceptions.DataNotFoundException;
 import com.project.NovelWeb.mappers.NovelResponseMapper;
 import com.project.NovelWeb.models.dtos.novel.NovelDTO;
+import com.project.NovelWeb.models.dtos.novel.UpdateNovelDTO;
 import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.models.entities.novel.ContentType;
 import com.project.NovelWeb.models.entities.novel.Novel;
@@ -130,10 +131,10 @@ public class NovelServiceImp implements NovelService {
 
     @Override
     @Transactional
-    public NovelResponse updateNovel(Long novelId, NovelDTO novelDTO) throws Exception {
+    public NovelResponse updateNovel(Long novelId, UpdateNovelDTO updateNovelDTO) throws Exception {
         Novel existingNovel = getNovelById(novelId);
-        if (existingNovel != null) {
-            List<ContentType> contentTypes = novelDTO.getContentTypeId().stream()
+        if (!updateNovelDTO.getContentTypeId().isEmpty()) {
+            List<ContentType> contentTypes = updateNovelDTO.getContentTypeId().stream()
                     .map(id -> {
                         try {
                             return contentTypeRepository.findById(id)
@@ -145,32 +146,33 @@ public class NovelServiceImp implements NovelService {
                     })
                     .collect(Collectors.toList());
             existingNovel.setContentTypes(contentTypes);
-            if (novelDTO.getName() != null && !novelDTO.getName().isEmpty()) {
-                existingNovel.setName(novelDTO.getName());
+        }
+            if (updateNovelDTO.getName() != null && !updateNovelDTO.getName().isEmpty()) {
+                existingNovel.setName(updateNovelDTO.getName());
             }
-            if (novelDTO.getAlias() != null && !novelDTO.getAlias().isEmpty()) {
-                existingNovel.setAlias(novelDTO.getAlias());
+            if (updateNovelDTO.getAlias() != null && !updateNovelDTO.getAlias().isEmpty()) {
+                existingNovel.setAlias(updateNovelDTO.getAlias());
             }
-            if (novelDTO.getPosterId() != null ) {
+            if (updateNovelDTO.getPosterId() != null ) {
                 User existingUser = userRepository
-                        .findById(novelDTO.getPosterId())
+                        .findById(updateNovelDTO.getPosterId())
                         .orElseThrow(() ->
                                 new DataNotFoundException(
-                                        "Cannot find User with id:" + novelDTO.getPosterId()));
+                                        "Cannot find User with id:" + updateNovelDTO.getPosterId()));
                 existingNovel.setPoster(existingUser);
             }
-            if (novelDTO.getContent() != null && !novelDTO.getContent().isEmpty()) {
-                existingNovel.setContent(novelDTO.getContent());
+            if (updateNovelDTO.getContent() != null && !updateNovelDTO.getContent().isEmpty()) {
+                existingNovel.setContent(updateNovelDTO.getContent());
             }
-            Status existingStatus = Status.valueOf(novelDTO.getStatus().toUpperCase());
-            if (!EnumUtil.isValidEnum(Status.class, novelDTO.getStatus())) {
-                throw new Exception("Invalid status value: " + novelDTO.getStatus());
+            if (updateNovelDTO.getStatus() != null) {
+                Status existingStatus = Status.valueOf(updateNovelDTO.getStatus().toUpperCase());
+                if (!EnumUtil.isValidEnum(Status.class, updateNovelDTO.getStatus())) {
+                    throw new Exception("Invalid status value: " + updateNovelDTO.getStatus());
+                }
+                existingNovel.setStatus(existingStatus);
             }
-            existingNovel.setStatus(existingStatus);
             Novel novel = novelRepository.save(existingNovel);
             return NovelResponseMapper.fromNovel(novel);
-        }
-        return null;
     }
 
     @Override
