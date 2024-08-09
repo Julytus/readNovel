@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${api.prefix}/chapter")
+@RequestMapping("${api.prefix}/chapters")
 public class ChapterController {
     private final ChapterService chapterService;
     @PostMapping("")

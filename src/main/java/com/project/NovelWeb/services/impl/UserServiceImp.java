@@ -2,10 +2,9 @@ package com.project.NovelWeb.services.impl;
 
 import com.project.NovelWeb.exceptions.DataNotFoundException;
 import com.project.NovelWeb.exceptions.ExpiredTokenException;
-import com.project.NovelWeb.exceptions.PermissionDenyException;
-import com.project.NovelWeb.models.dtos.UpdateUserDTO;
-import com.project.NovelWeb.models.dtos.UserDTO;
-import com.project.NovelWeb.models.dtos.UserLoginDTO;
+import com.project.NovelWeb.models.dtos.user.UpdateUserDTO;
+import com.project.NovelWeb.models.dtos.user.RegisterDTO;
+import com.project.NovelWeb.models.dtos.user.LoginDTO;
 import com.project.NovelWeb.models.entities.Role;
 import com.project.NovelWeb.models.entities.Token;
 import com.project.NovelWeb.models.entities.User;
@@ -21,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -35,7 +33,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,35 +40,28 @@ public class UserServiceImp implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
     private final JwtTokenUtils jwtTokenUtils;
     private final LocalizationUtils localizationUtils;
     private final TokenRepository tokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private static final String UPLOADS_FOLDER = "uploads/user_avatars";
     @Override
-    public User createUser(UserDTO userDTO) throws Exception {
-        String email = userDTO.getEmail();
+    public User createUser(RegisterDTO registerDTO) throws Exception {
+        String email = registerDTO.getEmail();
         if (userRepository.existsByEmail(email)) {
             throw new DataIntegrityViolationException(localizationUtils.getLocalizedMessage(MessageKeys.EMAIL_ALREADY_EXISTS));
         }
-        Role role = roleRepository.findById(userDTO.getRoleId())
-                .orElseThrow(() -> new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.ROLE_NOT_EXIST)));
-        if(role.getName().toUpperCase().equals(Role.ADMIN)) {
-            throw new PermissionDenyException(localizationUtils.getLocalizedMessage(MessageKeys.ROLE_NOT_EXIST));
-        }
 
         User newUser = User.builder()
-                .fullName(userDTO.getFullName())
+                .fullName(registerDTO.getFullName())
                 .active(true)
-                .email(userDTO.getEmail())
-                .password(userDTO.getPassword())
+                .email(registerDTO.getEmail())
+                .password(registerDTO.getPassword())
+                .role(roleRepository.getRoleByName(Role.USER))
                 .build();
 
-        newUser.setRole(role);
-
         //passwordEncode
-        String password = userDTO.getPassword();
+        String password = registerDTO.getPassword();
         String encodedPassword = passwordEncoder.encode(password);
         newUser.setPassword(encodedPassword);
 
@@ -79,26 +69,18 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public String login(UserLoginDTO userLoginDTO) throws Exception {
-        if (!userRepository.existsByEmail(userLoginDTO.getEmail())) {
-            throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.EMAIL_DOES_NOT_EXISTS));
+    public String login(LoginDTO loginDTO) throws Exception {
+        User currentUser = getUserByEmai(loginDTO.getEmail());
+        if (currentUser == null) {
+            throw new UsernameNotFoundException("Username not found");
         }
-        User currentUser = getUserByEmai(userLoginDTO.getEmail());
+
         if(!currentUser.isActive()) {
             throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.USER_IS_LOCKED));
         }
-
-        if(!passwordEncoder.matches(userLoginDTO.getPassword(), currentUser.getPassword())) {
-            throw new BadCredentialsException(localizationUtils.getLocalizedMessage(MessageKeys.WRONG_PASSWORD));
-        }
-
-        //check Role
-        Optional<Role> optionalRole = roleRepository.findById(userLoginDTO.getRoleId());
-        if(optionalRole.isEmpty() || !userLoginDTO.getRoleId().equals(currentUser.getRole().getId())) {
-            throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.ROLE_NOT_EXIST));
-        }
+        
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                userLoginDTO.getEmail(), null, currentUser.getAuthorities());
+                loginDTO.getEmail(), loginDTO.getPassword());
 
         //authenticate with Java Spring security
         Authentication authentication = authenticationManagerBuilder.getObject()
@@ -147,7 +129,7 @@ public class UserServiceImp implements UserService {
             throw new ExpiredTokenException("Token is expired");
         }
         String email = jwtTokenUtils.extractEmail(token);
-        return userRepository.findByEmail(email).get();
+        return userRepository.findByEmail(email);
     }
     @Override
     public User getUserDetailsFromRefreshToken(String refreshToken) throws Exception {
@@ -175,10 +157,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public User getUserByEmai(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException(
-                                "Cannot find user with email: " + email));
+        return userRepository.findByEmail(email);
     }
 
     @Override

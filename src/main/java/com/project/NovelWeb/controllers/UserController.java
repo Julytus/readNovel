@@ -3,7 +3,7 @@ package com.project.NovelWeb.controllers;
 import com.project.NovelWeb.exceptions.DataNotFoundException;
 import com.project.NovelWeb.exceptions.ExpiredTokenException;
 import com.project.NovelWeb.mappers.UserResponseMapper;
-import com.project.NovelWeb.models.dtos.UpdateUserDTO;
+import com.project.NovelWeb.models.dtos.user.UpdateUserDTO;
 import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.responses.ResponseObject;
 import com.project.NovelWeb.responses.UserListResponse;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("${api.prefix}/user")
+@RequestMapping("${api.prefix}/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;

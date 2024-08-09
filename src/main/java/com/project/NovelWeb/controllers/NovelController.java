@@ -27,7 +27,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${api.prefix}/novel")
+@RequestMapping("${api.prefix}/novels")
 public class NovelController {
     private final NovelService novelService;
     @PostMapping("")
@@ -35,7 +35,7 @@ public class NovelController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<NovelResponse> createNovel(
             @Valid @RequestBody NovelDTO novelDTO) throws Exception {
-        NovelResponse newNovel = novelService.createNovel(novelDTO);
+        NovelResponse newNovel = novelService.  createNovel(novelDTO);
         return ResponseEntity.ok(newNovel);
     }
 

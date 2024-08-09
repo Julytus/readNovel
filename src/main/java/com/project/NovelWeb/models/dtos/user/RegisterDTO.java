@@ -1,4 +1,4 @@
-package com.project.NovelWeb.models.dtos;
+package com.project.NovelWeb.models.dtos.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
@@ -9,7 +9,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class RegisterDTO {
     @JsonProperty("full_name")
     private String fullName;
 
@@ -23,7 +23,4 @@ public class UserDTO {
 
     @JsonProperty("retype_password")
     private String retypePassword;
-
-    @JsonProperty("role_id")
-    private Long roleId;
 }

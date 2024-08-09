@@ -2,9 +2,9 @@ package com.project.NovelWeb.services;
 
 import com.project.NovelWeb.exceptions.DataNotFoundException;
 import com.project.NovelWeb.exceptions.ExpiredTokenException;
-import com.project.NovelWeb.models.dtos.UserDTO;
-import com.project.NovelWeb.models.dtos.UserLoginDTO;
-import com.project.NovelWeb.models.dtos.UpdateUserDTO;
+import com.project.NovelWeb.models.dtos.user.RegisterDTO;
+import com.project.NovelWeb.models.dtos.user.LoginDTO;
+import com.project.NovelWeb.models.dtos.user.UpdateUserDTO;
 import com.project.NovelWeb.models.entities.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 public interface UserService {
-    User createUser(UserDTO userDTO) throws Exception;
-    String login(UserLoginDTO userLoginDTO) throws Exception;
+    User createUser(RegisterDTO registerDTO) throws Exception;
+    String login(LoginDTO loginDTO) throws Exception;
 
     User getUserById(Long id) throws DataNotFoundException;
 

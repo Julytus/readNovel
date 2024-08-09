@@ -5,6 +5,7 @@ import com.project.NovelWeb.responses.ResponseObject;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -64,6 +65,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = {
             UsernameNotFoundException.class,
             IdInvalidException.class,
+            BadCredentialsException.class
     })
     public ResponseEntity<ResponseObject> handleIdException(Exception ex) {
         ResponseObject res = new ResponseObject();
