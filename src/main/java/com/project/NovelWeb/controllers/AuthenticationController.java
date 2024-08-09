@@ -75,7 +75,7 @@ public class AuthenticationController {
                 .build();
 
         return ResponseEntity.ok().body(ResponseObject.builder()
-                .message("Login successfully")
+                .message("Create token successfully")
                 .data(loginResponse)
                 .status(HttpStatus.OK)
                 .build());

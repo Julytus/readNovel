@@ -25,6 +25,7 @@ public interface UserService {
     User getUserDetailsFromRefreshToken(String refreshToken) throws Exception;
     void resetPassword(Long userId, String newPassword) throws DataNotFoundException;
     Page<User> searchUser(String keyword, Pageable pageable);
+    User getUserByEmai(String email);
 
     User updateAvatar(User user, MultipartFile file) throws IOException;
     void blockOrEnable(Long userId, Boolean active) throws DataNotFoundException;

@@ -5,6 +5,7 @@ import com.project.NovelWeb.responses.ResponseObject;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -59,6 +60,16 @@ public class GlobalExceptionHandler {
                 HttpStatus.PAYLOAD_TOO_LARGE,
                 e.getMessage()
         );
+    }
+    @ExceptionHandler(value = {
+            UsernameNotFoundException.class,
+            IdInvalidException.class,
+    })
+    public ResponseEntity<ResponseObject> handleIdException(Exception ex) {
+        ResponseObject res = new ResponseObject();
+        res.setStatus(HttpStatus.BAD_REQUEST);
+        res.setMessage(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
 
     @ExceptionHandler(UnsupportedMediaTypeException.class)
