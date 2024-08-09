@@ -40,7 +40,7 @@ public class Novel extends BaseEntity {
     @Column(name = "image")
     private String imageUrl;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "novel_content_type",
             joinColumns = @JoinColumn(name = "novel_id"),

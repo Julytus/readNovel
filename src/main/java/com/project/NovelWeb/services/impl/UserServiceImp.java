@@ -1,20 +1,20 @@
 package com.project.NovelWeb.services.impl;
 
-import com.project.NovelWeb.exceptions.ExpiredTokenException;
-import com.project.NovelWeb.models.dtos.UserLoginDTO;
-import com.project.NovelWeb.models.dtos.novel.UpdateUserDTO;
-import com.project.NovelWeb.models.entities.Token;
-import com.project.NovelWeb.repositories.TokenRepository;
-import com.project.NovelWeb.utils.FileUploadUtil;
-import com.project.NovelWeb.utils.jwt.JwtTokenUtils;
-import com.project.NovelWeb.models.dtos.UserDTO;
 import com.project.NovelWeb.exceptions.DataNotFoundException;
+import com.project.NovelWeb.exceptions.ExpiredTokenException;
 import com.project.NovelWeb.exceptions.PermissionDenyException;
+import com.project.NovelWeb.models.dtos.UpdateUserDTO;
+import com.project.NovelWeb.models.dtos.UserDTO;
+import com.project.NovelWeb.models.dtos.UserLoginDTO;
 import com.project.NovelWeb.models.entities.Role;
+import com.project.NovelWeb.models.entities.Token;
 import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.repositories.RoleRepository;
+import com.project.NovelWeb.repositories.TokenRepository;
 import com.project.NovelWeb.repositories.UserRepository;
 import com.project.NovelWeb.services.UserService;
+import com.project.NovelWeb.utils.FileUploadUtil;
+import com.project.NovelWeb.utils.jwt.JwtTokenUtils;
 import com.project.NovelWeb.utils.localization.LocalizationUtils;
 import com.project.NovelWeb.utils.localization.MessageKeys;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +24,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +47,7 @@ public class UserServiceImp implements UserService {
     private final JwtTokenUtils jwtTokenUtils;
     private final LocalizationUtils localizationUtils;
     private final TokenRepository tokenRepository;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private static final String UPLOADS_FOLDER = "uploads/user_avatars";
     @Override
     public User createUser(UserDTO userDTO) throws Exception {
@@ -75,46 +80,32 @@ public class UserServiceImp implements UserService {
 
     @Override
     public String login(UserLoginDTO userLoginDTO) throws Exception {
-        Optional<User> optionalUser = Optional.empty();
-        String subject = null;
-
-        //CheckGmail,Fb...
-        //Code
-
-        if (userLoginDTO.getEmail() != null && !userLoginDTO.getEmail().isBlank()) {
-            optionalUser = userRepository.findByEmail(userLoginDTO.getEmail());
-            subject = userLoginDTO.getEmail();
-        }
-        if (optionalUser.isEmpty()) {
+        if (!userRepository.existsByEmail(userLoginDTO.getEmail())) {
             throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.EMAIL_DOES_NOT_EXISTS));
         }
-
-        User existingUser = optionalUser.get();
-        // Check if the user account is active
-        if(!optionalUser.get().isActive()) {
+        User currentUser = getUserByEmai(userLoginDTO.getEmail());
+        if(!currentUser.isActive()) {
             throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.USER_IS_LOCKED));
         }
 
-        //check Pass
-        if(!passwordEncoder.matches(userLoginDTO.getPassword(), existingUser.getPassword())) {
+        if(!passwordEncoder.matches(userLoginDTO.getPassword(), currentUser.getPassword())) {
             throw new BadCredentialsException(localizationUtils.getLocalizedMessage(MessageKeys.WRONG_PASSWORD));
         }
 
         //check Role
         Optional<Role> optionalRole = roleRepository.findById(userLoginDTO.getRoleId());
-        if(optionalRole.isEmpty() || !userLoginDTO.getRoleId().equals(existingUser.getRole().getId())) {
+        if(optionalRole.isEmpty() || !userLoginDTO.getRoleId().equals(currentUser.getRole().getId())) {
             throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.ROLE_NOT_EXIST));
         }
-
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                subject,
-                userLoginDTO.isPasswordBlank()  ? "" : userLoginDTO.getPassword(),
-                existingUser.getAuthorities()
-        );
+                userLoginDTO.getEmail(), null, currentUser.getAuthorities());
+
         //authenticate with Java Spring security
-        authenticationManager.authenticate(authenticationToken);
+        Authentication authentication = authenticationManagerBuilder.getObject()
+                .authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         ///Return Token
-        return jwtTokenUtils.generateToken(existingUser);
+        return jwtTokenUtils.generateToken(currentUser);
     }
 
     @Override
@@ -156,13 +147,7 @@ public class UserServiceImp implements UserService {
             throw new ExpiredTokenException("Token is expired");
         }
         String email = jwtTokenUtils.extractEmail(token);
-        Optional<User> user = userRepository.findByEmail(email);
-
-        if (user.isPresent()) {
-            return user.get();
-        } else {
-            throw new DataNotFoundException("User not found");
-        }
+        return userRepository.findByEmail(email).get();
     }
     @Override
     public User getUserDetailsFromRefreshToken(String refreshToken) throws Exception {
@@ -186,6 +171,14 @@ public class UserServiceImp implements UserService {
     @Override
     public Page<User> searchUser(String keyword, Pageable pageable) {
         return userRepository.searchUser(keyword, pageable);
+    }
+
+    @Override
+    public User getUserByEmai(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException(
+                                "Cannot find user with email: " + email));
     }
 
     @Override

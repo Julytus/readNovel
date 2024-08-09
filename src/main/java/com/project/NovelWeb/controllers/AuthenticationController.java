@@ -4,7 +4,6 @@ import com.project.NovelWeb.mappers.UserResponseMapper;
 import com.project.NovelWeb.models.dtos.RefreshTokenDTO;
 import com.project.NovelWeb.models.dtos.UserDTO;
 import com.project.NovelWeb.models.dtos.UserLoginDTO;
-import com.project.NovelWeb.exceptions.MethodArgumentNotValidException;
 import com.project.NovelWeb.models.entities.Token;
 import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.responses.LoginResponse;
@@ -19,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,13 +34,8 @@ public class AuthenticationController {
     private final TokenService tokenService;
     @PostMapping("/register")
     public ResponseEntity<ResponseObject> register(
-            @Valid @RequestBody UserDTO userDTO,
-            BindingResult bindingResult
+            @Valid @RequestBody UserDTO userDTO
     ) throws Exception{
-        if (bindingResult.hasErrors()) {
-            throw new MethodArgumentNotValidException(bindingResult);
-        }
-
         if (!userDTO.getRetypePassword().equals(userDTO.getPassword())) {
             return ResponseEntity.badRequest().body(ResponseObject
                     .builder()
@@ -82,7 +75,7 @@ public class AuthenticationController {
                 .build();
 
         return ResponseEntity.ok().body(ResponseObject.builder()
-                .message("Login successfully")
+                .message("Create token successfully")
                 .data(loginResponse)
                 .status(HttpStatus.OK)
                 .build());

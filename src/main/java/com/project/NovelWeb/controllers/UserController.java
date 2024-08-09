@@ -3,7 +3,7 @@ package com.project.NovelWeb.controllers;
 import com.project.NovelWeb.exceptions.DataNotFoundException;
 import com.project.NovelWeb.exceptions.ExpiredTokenException;
 import com.project.NovelWeb.mappers.UserResponseMapper;
-import com.project.NovelWeb.models.dtos.novel.UpdateUserDTO;
+import com.project.NovelWeb.models.dtos.UpdateUserDTO;
 import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.responses.ResponseObject;
 import com.project.NovelWeb.responses.UserListResponse;

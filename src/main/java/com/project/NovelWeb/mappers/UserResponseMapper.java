@@ -5,7 +5,7 @@ import com.project.NovelWeb.responses.UserResponse;
 
 public class UserResponseMapper {
     public static UserResponse fromUser(User user) {
-        return UserResponse
+        UserResponse userResponse = UserResponse
                 .builder()
                 .id(user.getId())
                 .email(user.getEmail())
@@ -14,5 +14,8 @@ public class UserResponseMapper {
                 .active(user.isActive())
                 .role(user.getRole())
                 .build();
+        userResponse.setCreatedAt(user.getCreatedAt());
+        userResponse.setUpdatedAt(user.getUpdatedAt());
+        return userResponse;
     }
 }

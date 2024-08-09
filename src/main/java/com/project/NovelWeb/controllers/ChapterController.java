@@ -1,7 +1,6 @@
 package com.project.NovelWeb.controllers;
 
 import com.project.NovelWeb.exceptions.DataNotFoundException;
-import com.project.NovelWeb.exceptions.MethodArgumentNotValidException;
 import com.project.NovelWeb.models.dtos.ChapterDTO;
 import com.project.NovelWeb.responses.ChapterResponse;
 import com.project.NovelWeb.responses.ResponseObject;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -23,11 +21,10 @@ public class ChapterController {
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_POSTER')")
     public ResponseEntity<ChapterResponse> createChapter(
-            @Valid @RequestBody ChapterDTO chapterDTO,
-            BindingResult bindingResult) throws Exception {
-        if(bindingResult.hasErrors()) {
-            throw new MethodArgumentNotValidException(bindingResult);
-        }
+            @Valid @RequestBody ChapterDTO chapterDTO) throws Exception {
+//        if(bindingResult.hasErrors()) {
+//            throw new MethodArgumentNotValidException(bindingResult);
+//        }
         ChapterResponse chapterResponse = chapterService.createChapter(chapterDTO);
         return ResponseEntity.ok(chapterResponse);
     }

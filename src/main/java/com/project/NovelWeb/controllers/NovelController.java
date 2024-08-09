@@ -1,9 +1,8 @@
 package com.project.NovelWeb.controllers;
 
-import com.project.NovelWeb.exceptions.DataNotFoundException;
 import com.project.NovelWeb.mappers.NovelResponseMapper;
 import com.project.NovelWeb.models.dtos.novel.NovelDTO;
-import com.project.NovelWeb.exceptions.MethodArgumentNotValidException;
+import com.project.NovelWeb.models.dtos.novel.UpdateNovelDTO;
 import com.project.NovelWeb.models.entities.novel.Novel;
 import com.project.NovelWeb.responses.ResponseObject;
 import com.project.NovelWeb.responses.novel.NovelListResponse;
@@ -20,11 +19,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -37,12 +34,7 @@ public class NovelController {
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<NovelResponse> createNovel(
-            @Valid @RequestBody NovelDTO novelDTO,
-            BindingResult bindingResult) throws Exception {
-        if(bindingResult.hasErrors()) {
-            throw new MethodArgumentNotValidException(bindingResult);
-        }
-
+            @Valid @RequestBody NovelDTO novelDTO) throws Exception {
         NovelResponse newNovel = novelService.createNovel(novelDTO);
         return ResponseEntity.ok(newNovel);
     }
@@ -108,7 +100,7 @@ public class NovelController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ResponseObject> deleteNovel(@PathVariable Long id) {
         novelService.deleteNovel(id);
         return ResponseEntity.ok(ResponseObject
@@ -123,9 +115,9 @@ public class NovelController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_POSTER')")
     public ResponseEntity<ResponseObject> updateNovel(
             @PathVariable Long id,
-            @Valid @RequestBody NovelDTO novelDTO
+            @Valid @RequestBody UpdateNovelDTO updateNovelDTO
     ) throws Exception {
-        NovelResponse novelResponse = novelService.updateNovel(id, novelDTO);
+        NovelResponse novelResponse = novelService.updateNovel(id, updateNovelDTO);
         return ResponseEntity.ok(ResponseObject
                 .builder()
                 .data(novelResponse)
@@ -135,11 +127,11 @@ public class NovelController {
     }
 
     @GetMapping("/image/{id}")
-    public ResponseEntity<?> viewNovelImage(@PathVariable Long id) {
+    public ResponseEntity<?> getNovelImage(@PathVariable Long id) {
         try {
             Novel novel = novelService.getNovelById(id);
 
-            java.nio.file.Path imagePath = Paths.get("uploads/"+novel.getImageUrl());
+            java.nio.file.Path imagePath = Paths.get("uploads/novel_images/"+novel.getImageUrl());
             UrlResource resource = new UrlResource(imagePath.toUri());
 
             if (resource.exists()) {

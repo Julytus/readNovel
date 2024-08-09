@@ -1,13 +1,18 @@
 package com.project.NovelWeb.exceptions;
 
+import com.project.NovelWeb.responses.ErrorResponse;
 import com.project.NovelWeb.responses.ResponseObject;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice //xử lý ngoại lệ chung
 public class GlobalExceptionHandler {
@@ -31,17 +36,20 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ResponseObject> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        BindingResult bindingResult = ex.getBindingResult();
-        List<String> errors = bindingResult.getFieldErrors().stream()
-                .map(FieldError::getDefaultMessage)
-                .toList();
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        List<String> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.toList());
 
-        return ResponseEntity.badRequest().body(ResponseObject.builder()
-                .status(HttpStatus.BAD_REQUEST)
-                .message(String.join(", ", errors))
-                .build());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Validation failed",
+                HttpStatus.BAD_REQUEST.toString(),
+                errors
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MaximumMemoryExceededException.class)
@@ -52,6 +60,16 @@ public class GlobalExceptionHandler {
                 HttpStatus.PAYLOAD_TOO_LARGE,
                 e.getMessage()
         );
+    }
+    @ExceptionHandler(value = {
+            UsernameNotFoundException.class,
+            IdInvalidException.class,
+    })
+    public ResponseEntity<ResponseObject> handleIdException(Exception ex) {
+        ResponseObject res = new ResponseObject();
+        res.setStatus(HttpStatus.BAD_REQUEST);
+        res.setMessage(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
 
     @ExceptionHandler(UnsupportedMediaTypeException.class)

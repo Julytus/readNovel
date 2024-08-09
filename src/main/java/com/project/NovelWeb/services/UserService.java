@@ -4,9 +4,8 @@ import com.project.NovelWeb.exceptions.DataNotFoundException;
 import com.project.NovelWeb.exceptions.ExpiredTokenException;
 import com.project.NovelWeb.models.dtos.UserDTO;
 import com.project.NovelWeb.models.dtos.UserLoginDTO;
-import com.project.NovelWeb.models.dtos.novel.UpdateUserDTO;
+import com.project.NovelWeb.models.dtos.UpdateUserDTO;
 import com.project.NovelWeb.models.entities.User;
-import com.project.NovelWeb.responses.UserResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +25,7 @@ public interface UserService {
     User getUserDetailsFromRefreshToken(String refreshToken) throws Exception;
     void resetPassword(Long userId, String newPassword) throws DataNotFoundException;
     Page<User> searchUser(String keyword, Pageable pageable);
+    User getUserByEmai(String email);
 
     User updateAvatar(User user, MultipartFile file) throws IOException;
     void blockOrEnable(Long userId, Boolean active) throws DataNotFoundException;
