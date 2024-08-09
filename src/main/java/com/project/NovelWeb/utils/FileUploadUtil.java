@@ -36,7 +36,7 @@ public class FileUploadUtil {
         }
     }
 
-    public static <T> T updateImage(T entity, MultipartFile file, String uploadsFolder, Long id) throws IOException {
+    public static <T> void updateImage(T entity, MultipartFile file, String uploadsFolder, Long id) throws IOException {
         validateImageFile(file);
 
         String fileName = id + "_"+UUID.randomUUID() + "_" + StringUtils.cleanPath(
@@ -58,6 +58,5 @@ public class FileUploadUtil {
             ((Novel) entity).setImageUrl(fileName);
         }
 
-        return entity;
     }
 }

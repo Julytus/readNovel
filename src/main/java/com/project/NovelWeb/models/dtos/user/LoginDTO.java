@@ -1,4 +1,4 @@
-package com.project.NovelWeb.models.dtos;
+package com.project.NovelWeb.models.dtos.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Min;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserLoginDTO {
+public class LoginDTO {
     @JsonProperty("email")
     @NotBlank(message = "Email is required!")
     private String email;

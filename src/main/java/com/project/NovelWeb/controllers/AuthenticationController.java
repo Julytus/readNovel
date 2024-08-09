@@ -2,8 +2,8 @@ package com.project.NovelWeb.controllers;
 
 import com.project.NovelWeb.mappers.UserResponseMapper;
 import com.project.NovelWeb.models.dtos.RefreshTokenDTO;
-import com.project.NovelWeb.models.dtos.UserDTO;
-import com.project.NovelWeb.models.dtos.UserLoginDTO;
+import com.project.NovelWeb.models.dtos.user.RegisterDTO;
+import com.project.NovelWeb.models.dtos.user.LoginDTO;
 import com.project.NovelWeb.models.entities.Token;
 import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.responses.LoginResponse;
@@ -34,9 +34,9 @@ public class AuthenticationController {
     private final TokenService tokenService;
     @PostMapping("/register")
     public ResponseEntity<ResponseObject> register(
-            @Valid @RequestBody UserDTO userDTO
+            @Valid @RequestBody RegisterDTO registerDTO
     ) throws Exception{
-        if (!userDTO.getRetypePassword().equals(userDTO.getPassword())) {
+        if (!registerDTO.getRetypePassword().equals(registerDTO.getPassword())) {
             return ResponseEntity.badRequest().body(ResponseObject
                     .builder()
                     .status(HttpStatus.BAD_REQUEST)
@@ -44,7 +44,7 @@ public class AuthenticationController {
                     .message(localizationUtils.getLocalizedMessage(MessageKeys.PASSWORD_NOT_MATCH))
                     .build());
         }
-        User user = userService.createUser(userDTO);
+        User user = userService.createUser(registerDTO);
         return ResponseEntity.ok(ResponseObject
                 .builder()
                 .status(HttpStatus.CREATED)
@@ -55,11 +55,11 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<ResponseObject> login(
-            @Valid @RequestBody UserLoginDTO userLoginDTO,
+            @Valid @RequestBody LoginDTO loginDTO,
             HttpServletRequest request
     ) throws Exception{
         //Check info and generate Token
-        String token = userService.login(userLoginDTO);
+        String token = userService.login(loginDTO);
         String userAgent = request.getHeader("User-Agent");
         User userDetail = userService.getUserDetailsFromToken(token);
         Token jwtToken = tokenService.addToken(userDetail, token, isMobileDevice(userAgent));

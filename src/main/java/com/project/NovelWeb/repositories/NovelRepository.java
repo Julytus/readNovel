@@ -34,6 +34,7 @@ public interface NovelRepository extends JpaRepository<Novel, Long> {
             @Param("contentTypeCount") int contentTypeCount,
             Pageable pageable);
 
+    
     Page<Novel> findAllByStatus(Status status, Pageable pageable);
 
     @Query("SELECT n FROM Novel n LEFT JOIN FETCH n.contentTypes ct WHERE n.id = :novelId")

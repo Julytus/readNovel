@@ -8,14 +8,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByEmail(String email);
-    Optional<User> findByEmail(String Email);
+    User findByEmail(String email);
     @Query("SELECT o FROM User o WHERE o.active = true AND (:keyword IS NULL OR :keyword = '' OR " +
             "o.email LIKE %:keyword%)")
     Page<User> searchUser(@Param("keyword") String keyword, Pageable pageable);
+
 }

@@ -5,7 +5,7 @@ import com.project.NovelWeb.models.entities.Permission;
 import com.project.NovelWeb.models.entities.Role;
 import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.services.UserService;
-import com.project.NovelWeb.utils.jwt.JwtTokenUtils;
+import com.project.NovelWeb.utils.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +35,11 @@ public class PermissionInterceptor implements HandlerInterceptor {
         String httpMethod = request.getMethod();
 
         // check permission
-        String email = JwtTokenUtils.getCurrentUserLogin().isPresent()
-                 ? JwtTokenUtils.getCurrentUserLogin().get()
+        String email = SecurityUtil.getCurrentUserLogin().isPresent()
+                 ? SecurityUtil.getCurrentUserLogin().get()
                 : "";
         if (!email.isEmpty()) {
-            User user = this.userService.getUserByEmai(email);
+            User user = userService.getUserByEmai(email);
             if (user != null) {
                 Role role = user.getRole();
                 if (role != null) {
@@ -48,10 +48,10 @@ public class PermissionInterceptor implements HandlerInterceptor {
                             && item.getMethod().equals(httpMethod));
 
                     if (!isAllow) {
-                        throw new IdInvalidException("Bạn không có quyền truy cập endpoint này.");
+                        throw new IdInvalidException("You do not have permission to access this endpoint.");
                     }
                 } else {
-                    throw new IdInvalidException("Bạn không có quyền truy cập endpoint này.");
+                    throw new IdInvalidException("You do not have permission to access this endpoint.");
                 }
             }
         }
