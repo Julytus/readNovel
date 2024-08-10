@@ -1,6 +1,6 @@
 package com.project.NovelWeb.configurations;
 
-import com.project.NovelWeb.exceptions.IdInvalidException;
+import com.project.NovelWeb.exceptions.PermissionException;
 import com.project.NovelWeb.models.entities.Permission;
 import com.project.NovelWeb.models.entities.Role;
 import com.project.NovelWeb.models.entities.User;
@@ -48,10 +48,10 @@ public class PermissionInterceptor implements HandlerInterceptor {
                             && item.getMethod().equals(httpMethod));
 
                     if (!isAllow) {
-                        throw new IdInvalidException("You do not have permission to access this endpoint.");
+                        throw new PermissionException("You do not have permission to access this endpoint.");
                     }
                 } else {
-                    throw new IdInvalidException("You do not have permission to access this endpoint.");
+                    throw new PermissionException("You do not have permission to access this endpoint.");
                 }
             }
         }

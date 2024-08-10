@@ -62,16 +62,26 @@ public class GlobalExceptionHandler {
                 e.getMessage()
         );
     }
+
+    @ExceptionHandler(PermissionException.class)
+    public ResponseObject handlePermissionException(Exception e) {
+        return new ResponseObject(
+                "FORBIDDEN",
+                HttpStatus.FORBIDDEN,
+                e.getMessage()
+        );
+    }
     @ExceptionHandler(value = {
             UsernameNotFoundException.class,
             IdInvalidException.class,
             BadCredentialsException.class
     })
-    public ResponseEntity<ResponseObject> handleIdException(Exception ex) {
-        ResponseObject res = new ResponseObject();
-        res.setStatus(HttpStatus.BAD_REQUEST);
-        res.setMessage(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    public ResponseObject handleIdException(Exception e) {
+        return new ResponseObject(
+                "BAD REQUEST",
+                HttpStatus.BAD_REQUEST,
+                e.getMessage()
+        );
     }
 
     @ExceptionHandler(UnsupportedMediaTypeException.class)

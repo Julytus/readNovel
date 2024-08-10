@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class ChapterController {
     private final ChapterService chapterService;
     @PostMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_POSTER')")
     public ResponseEntity<ChapterResponse> createChapter(
             @Valid @RequestBody ChapterDTO chapterDTO) throws Exception {
 //        if(bindingResult.hasErrors()) {
@@ -31,8 +29,7 @@ public class ChapterController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_POSTER')")
-    public ResponseEntity<ResponseObject> deleteNovel(@PathVariable Integer id)
+    public ResponseEntity<ResponseObject> deleteChapter(@PathVariable Integer id)
             throws DataNotFoundException {
         chapterService.deleteChapter(id);
         return ResponseEntity.ok(ResponseObject
