@@ -32,7 +32,6 @@ public class NovelController {
     private final NovelService novelService;
     @PostMapping("")
     @Transactional
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<NovelResponse> createNovel(
             @Valid @RequestBody NovelDTO novelDTO) throws Exception {
         NovelResponse newNovel = novelService.  createNovel(novelDTO);
@@ -100,7 +99,6 @@ public class NovelController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ResponseObject> deleteNovel(@PathVariable Long id) {
         novelService.deleteNovel(id);
         return ResponseEntity.ok(ResponseObject
@@ -112,7 +110,6 @@ public class NovelController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_POSTER')")
     public ResponseEntity<ResponseObject> updateNovel(
             @PathVariable Long id,
             @Valid @RequestBody UpdateNovelDTO updateNovelDTO
