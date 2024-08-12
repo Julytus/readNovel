@@ -1,12 +1,12 @@
 package com.project.NovelWeb.services.impl;
 
-import com.project.NovelWeb.exceptions.DataNotFoundException;
-import com.project.NovelWeb.exceptions.ExpiredTokenException;
+import com.project.NovelWeb.exceptions.IdInvalidException;
 import com.project.NovelWeb.models.entities.Token;
 import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.repositories.TokenRepository;
 import com.project.NovelWeb.services.TokenService;
-import com.project.NovelWeb.utils.jwt.JwtTokenUtils;
+import com.project.NovelWeb.services.UserService;
+import com.project.NovelWeb.utils.JwtTokenUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,23 +14,23 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class TokenServiceImp implements TokenService {
     private static final int MAX_TOKENS = 3;
-    @Value("${jwt.expiration}")
-    private int expiration; //save to an environment variable
+    @Value("${jwt.expiration-access-token}")
+    private int expirationAccessToken; //save to an environment variable
 
     @Value("${jwt.expiration-refresh-token}")
     private int expirationRefreshToken;
 
     private final TokenRepository tokenRepository;
     private final JwtTokenUtils jwtTokenUtils;
+    private final UserService userService;
     @Transactional
     @Override
-    public Token addToken(User user, String token, boolean isMobileDevice) {
+    public Token addToken(User user, String token, boolean isMobileDevice) throws Exception {
         List<Token> userTokens = tokenRepository.findByUser(user);
         int tokenCount = userTokens.size();
         if (tokenCount >= MAX_TOKENS) {
@@ -48,8 +48,8 @@ public class TokenServiceImp implements TokenService {
             }
             tokenRepository.delete(tokenToDelete);
         }
-        long expirationInSeconds = expiration;
-        LocalDateTime expirationDateTime = LocalDateTime.now().plusSeconds(expirationInSeconds);
+
+        String newRefreshToke = jwtTokenUtils.createRefreshToken(user);
         //Generate a new token for the user
         Token newToken = Token.builder()
                 .user(user)
@@ -57,31 +57,32 @@ public class TokenServiceImp implements TokenService {
                 .revoked(false)
                 .expired(false)
                 .tokenType("Bearer")
-                .expirationDate(expirationDateTime)
+                .expirationDate(LocalDateTime.now().plusSeconds(expirationAccessToken))
                 .isMobile(isMobileDevice)
                 .build();
-        newToken.setRefreshToken(UUID.randomUUID().toString());
+        newToken.setRefreshToken(newRefreshToke);
         newToken.setRefreshExpirationDate(LocalDateTime.now().plusSeconds(expirationRefreshToken));
         tokenRepository.save(newToken);
         return newToken;
     }
 
     @Override
-    public Token refreshToken(String refreshToken, User user) throws Exception {
+    public Token refreshToken(String refreshToken, String email) throws Exception {
+        if (refreshToken.equals("abc")) {
+            throw new IdInvalidException("You do not have a refresh token in your cookie.");
+        }
         Token existingToken = tokenRepository.findByRefreshToken(refreshToken);
-        if(existingToken == null) {
-            throw new DataNotFoundException("Refresh token does not exist");
+        User currentUser = userService.getUserDetailsFromRefreshToken(refreshToken, email);
+        if (currentUser == null) {
+            throw new IdInvalidException("Invalid refresh Token");
         }
-        if(existingToken.getRefreshExpirationDate().isBefore(LocalDateTime.now())){
-            tokenRepository.delete(existingToken);
-            throw new ExpiredTokenException("Refresh token is expired");
-        }
-        String token = jwtTokenUtils.generateToken(user);
-        LocalDateTime expirationDateTime = LocalDateTime.now().plusSeconds(expiration);
-        existingToken.setExpirationDate(expirationDateTime);
-        existingToken.setToken(token);
-        existingToken.setRefreshToken(UUID.randomUUID().toString());
+
+        String newAccessToken = jwtTokenUtils.createAccessToken(currentUser);
+        String newRefreshToken = jwtTokenUtils.createRefreshToken(currentUser);
+        existingToken.setToken(newAccessToken);
+        existingToken.setExpirationDate(LocalDateTime.now().plusSeconds(expirationAccessToken));
+        existingToken.setRefreshToken(newRefreshToken);
         existingToken.setRefreshExpirationDate(LocalDateTime.now().plusSeconds(expirationRefreshToken));
-        return existingToken;
+        return tokenRepository.save(existingToken);
     }
 }

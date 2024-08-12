@@ -21,10 +21,8 @@ public class NovelResponse extends BaseResponse {
     private Long posterId;
     @JsonProperty("author_id")
     private Long authorId;
-    private String message;
-    private List<String> errors;
-    @JsonProperty("content_type_id")
-    private List<Long> contentTypeId;
     @JsonProperty("last_chapter_id")
     private Integer lastChapterId;
+    @JsonProperty("content_types")
+    private List<String> contentTypes;
 }

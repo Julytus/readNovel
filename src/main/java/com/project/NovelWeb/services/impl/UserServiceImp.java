@@ -12,8 +12,8 @@ import com.project.NovelWeb.repositories.RoleRepository;
 import com.project.NovelWeb.repositories.TokenRepository;
 import com.project.NovelWeb.repositories.UserRepository;
 import com.project.NovelWeb.services.UserService;
-import com.project.NovelWeb.utils.FileUploadUtil;
-import com.project.NovelWeb.utils.jwt.JwtTokenUtils;
+import com.project.NovelWeb.utils.FileUtils;
+import com.project.NovelWeb.utils.JwtTokenUtils;
 import com.project.NovelWeb.utils.localization.LocalizationUtils;
 import com.project.NovelWeb.utils.localization.MessageKeys;
 import lombok.RequiredArgsConstructor;
@@ -87,7 +87,7 @@ public class UserServiceImp implements UserService {
                 .authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         ///Return Token
-        return jwtTokenUtils.generateToken(currentUser);
+        return jwtTokenUtils.createAccessToken(currentUser);
     }
 
     @Override
@@ -132,9 +132,17 @@ public class UserServiceImp implements UserService {
         return userRepository.findByEmail(email);
     }
     @Override
-    public User getUserDetailsFromRefreshToken(String refreshToken) throws Exception {
+    public User getUserDetailsFromRefreshToken(String refreshToken, String email) throws Exception {
         Token existingToken = tokenRepository.findByRefreshToken(refreshToken);
-        return getUserDetailsFromToken(existingToken.getToken());
+        return getUserDetailsFromRefreshToken(existingToken.getRefreshToken());
+    }
+
+    public User getUserDetailsFromRefreshToken(String refreshToken) throws ExpiredTokenException, DataNotFoundException {
+        if(jwtTokenUtils.isTokenExpired(refreshToken)) {
+            throw new ExpiredTokenException("Refresh token is expired");
+        }
+        String email = jwtTokenUtils.extractEmail(refreshToken);
+        return userRepository.findByEmail(email);
     }
 
     @Override
@@ -162,7 +170,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public User updateAvatar(User user, MultipartFile file) throws IOException {
-        FileUploadUtil.updateImage(user, file, UPLOADS_FOLDER, user.getId());
+        FileUtils.updateImage(user, file, UPLOADS_FOLDER, user.getId());
         return userRepository.save(user);
     }
     @Override

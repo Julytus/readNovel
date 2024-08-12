@@ -5,7 +5,7 @@ import com.project.NovelWeb.models.entities.Permission;
 import com.project.NovelWeb.models.entities.Role;
 import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.services.UserService;
-import com.project.NovelWeb.utils.SecurityUtil;
+import com.project.NovelWeb.utils.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +35,8 @@ public class PermissionInterceptor implements HandlerInterceptor {
         String httpMethod = request.getMethod();
 
         // check permission
-        String email = SecurityUtil.getCurrentUserLogin().isPresent()
-                 ? SecurityUtil.getCurrentUserLogin().get()
+        String email = SecurityUtils.getCurrentUserLogin().isPresent()
+                 ? SecurityUtils.getCurrentUserLogin().get()
                 : "";
         if (!email.isEmpty()) {
             User user = userService.getUserByEmai(email);

@@ -4,14 +4,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class SecurityUtil {
-
+public class SecurityUtils {
+    public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS256;
     /**
      * Get the login of the current user.
      *
@@ -46,6 +47,4 @@ public class SecurityUtil {
                 .filter(authentication -> authentication.getCredentials() instanceof String)
                 .map(authentication -> (String) authentication.getCredentials());
     }
-
-
 }

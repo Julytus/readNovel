@@ -12,7 +12,7 @@ public class UserResponseMapper {
                 .fullName(user.getFullName())
                 .avatar(user.getAvatar())
                 .active(user.isActive())
-                .role(user.getRole())
+                .role(user.getRole().getName())
                 .build();
         userResponse.setCreatedAt(user.getCreatedAt());
         userResponse.setUpdatedAt(user.getUpdatedAt());

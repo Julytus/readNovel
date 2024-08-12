@@ -1,8 +1,6 @@
 package com.project.NovelWeb.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.NovelWeb.models.entities.Role;
-import com.project.NovelWeb.models.entities.User;
 import lombok.*;
 
 @Getter
@@ -28,6 +26,6 @@ public class UserResponse extends BaseResponse{
     private String email;
 
     @JsonProperty("role")
-    private Role role;
+    private String role;
 
 }

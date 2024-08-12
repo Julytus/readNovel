@@ -30,7 +30,7 @@ public class Role {
             inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private List<Permission> permissions;
 
-    public static String ADMIN = "ADMIN";
+    public static String ADMIN = "ROLE_ADMIN";
     public static String USER = "USER";
     public static String POSTER = "POSTER";
 }

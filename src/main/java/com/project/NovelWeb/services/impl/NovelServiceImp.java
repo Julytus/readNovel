@@ -13,8 +13,8 @@ import com.project.NovelWeb.repositories.NovelRepository;
 import com.project.NovelWeb.repositories.UserRepository;
 import com.project.NovelWeb.responses.novel.NovelResponse;
 import com.project.NovelWeb.services.NovelService;
-import com.project.NovelWeb.utils.EnumUtil;
-import com.project.NovelWeb.utils.FileUploadUtil;
+import com.project.NovelWeb.utils.EnumUtils;
+import com.project.NovelWeb.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -73,7 +73,7 @@ public class NovelServiceImp implements NovelService {
             novelDTO.setStatus("ONGOING");
         }
 
-        if (!EnumUtil.isValidEnum(Status.class, status)) {
+        if (!EnumUtils.isValidEnum(Status.class, status)) {
             throw new Exception("Invalid status value: " + status);
         }
 
@@ -114,7 +114,7 @@ public class NovelServiceImp implements NovelService {
     @Override
     public Page<NovelResponse> findAllByStatus(String status, PageRequest pageRequest) throws Exception {
         Status existingStatus = Status.valueOf(status.toUpperCase());
-        if (!EnumUtil.isValidEnum(Status.class, status)) {
+        if (!EnumUtils.isValidEnum(Status.class, status)) {
             throw new Exception("Invalid status value: " + status);
         }
         Page<Novel> novelPage = novelRepository.findAllByStatus(existingStatus, pageRequest);
@@ -166,7 +166,7 @@ public class NovelServiceImp implements NovelService {
             }
             if (updateNovelDTO.getStatus() != null) {
                 Status existingStatus = Status.valueOf(updateNovelDTO.getStatus().toUpperCase());
-                if (!EnumUtil.isValidEnum(Status.class, updateNovelDTO.getStatus())) {
+                if (!EnumUtils.isValidEnum(Status.class, updateNovelDTO.getStatus())) {
                     throw new Exception("Invalid status value: " + updateNovelDTO.getStatus());
                 }
                 existingNovel.setStatus(existingStatus);
@@ -177,7 +177,7 @@ public class NovelServiceImp implements NovelService {
 
     @Override
     public Novel updateImage(MultipartFile file, Novel novel) throws IOException{
-        FileUploadUtil.updateImage(novel, file, UPLOADS_FOLDER, novel.getId());
+        FileUtils.updateImage(novel, file, UPLOADS_FOLDER, novel.getId());
         return novelRepository.save(novel);
     }
 }
