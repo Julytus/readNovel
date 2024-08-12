@@ -1,28 +1,27 @@
 package com.project.NovelWeb.controllers;
 
 import com.project.NovelWeb.mappers.UserResponseMapper;
-import com.project.NovelWeb.models.dtos.RefreshTokenDTO;
-import com.project.NovelWeb.models.dtos.user.RegisterDTO;
 import com.project.NovelWeb.models.dtos.user.LoginDTO;
+import com.project.NovelWeb.models.dtos.user.RegisterDTO;
 import com.project.NovelWeb.models.entities.Token;
 import com.project.NovelWeb.models.entities.User;
 import com.project.NovelWeb.responses.LoginResponse;
 import com.project.NovelWeb.responses.ResponseObject;
 import com.project.NovelWeb.services.TokenService;
 import com.project.NovelWeb.services.UserService;
+import com.project.NovelWeb.utils.JwtTokenUtils;
 import com.project.NovelWeb.utils.localization.LocalizationUtils;
 import com.project.NovelWeb.utils.localization.MessageKeys;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -32,6 +31,9 @@ public class AuthenticationController {
     private final UserService userService;
     private final LocalizationUtils localizationUtils;
     private final TokenService tokenService;
+    private final JwtTokenUtils jwtTokenUtils;
+    @Value("${jwt.expiration-refresh-token}")
+    private int expirationRefreshToken;
     @PostMapping("/register")
     public ResponseEntity<ResponseObject> register(
             @Valid @RequestBody RegisterDTO registerDTO
@@ -52,7 +54,6 @@ public class AuthenticationController {
                 .message(localizationUtils.getLocalizedMessage(MessageKeys.REGISTER_SUCCESSFULLY))
                 .build());
     }
-
     @PostMapping("/login")
     public ResponseEntity<ResponseObject> login(
             @Valid @RequestBody LoginDTO loginDTO,
@@ -61,48 +62,67 @@ public class AuthenticationController {
         //Check info and generate Token
         String token = userService.login(loginDTO);
         String userAgent = request.getHeader("User-Agent");
-        User userDetail = userService.getUserDetailsFromToken(token);
-        Token jwtToken = tokenService.addToken(userDetail, token, isMobileDevice(userAgent));
+        User user = userService.getUserDetailsFromToken(token);
+        Token jwtToken = tokenService.addToken(user, token, isMobileDevice(userAgent));
 
-        LoginResponse loginResponse = LoginResponse.builder()
-                .message(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_SUCCESSFULLY))
-                .token(jwtToken.getToken())
-                .tokenType(jwtToken.getTokenType())
-                .refreshToken(jwtToken.getRefreshToken())
-                .username(userDetail.getUsername())
-                .roles(userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList()) //method reference
-                .id(userDetail.getId())
+        LoginResponse loginResponse = fromUserAndToken(user, jwtToken);
+
+        ResponseCookie resCookies = ResponseCookie
+                .from("refresh_token", jwtToken.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(expirationRefreshToken)
+//                .domain("")
                 .build();
 
-        return ResponseEntity.ok().body(ResponseObject.builder()
-                .message("Create token successfully")
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, resCookies.toString())
+                .body(ResponseObject.builder()
+                .message(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_SUCCESSFULLY))
                 .data(loginResponse)
                 .status(HttpStatus.OK)
                 .build());
-    }
-    public ResponseEntity<ResponseObject> refreshToken(
-            @Valid @RequestBody RefreshTokenDTO refreshTokenDTO
-    ) throws Exception {
-        User userDetail = userService.getUserDetailsFromRefreshToken(refreshTokenDTO.getRefreshToken());
-        Token jwtToken = tokenService.refreshToken(refreshTokenDTO.getRefreshToken(), userDetail);
-        LoginResponse loginResponse = LoginResponse.builder()
-                .message("Refresh token successfully")
-                .token(jwtToken.getToken())
-                .tokenType(jwtToken.getTokenType())
-                .refreshToken(jwtToken.getRefreshToken())
-                .username(userDetail.getUsername())
-                .roles(userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
-                .id(userDetail.getId()).build();
-        return ResponseEntity.ok().body(
-                ResponseObject.builder()
-                        .data(loginResponse)
-                        .message(loginResponse.getMessage())
-                        .status(HttpStatus.OK)
-                        .build());
     }
     private boolean isMobileDevice(String userAgent) {
         return userAgent.toLowerCase().contains("mobile");
     }
 
+    @GetMapping("/refresh")
+    public ResponseEntity<ResponseObject> getRefreshToken(
+            @CookieValue(name = "refresh_token", defaultValue = "abc") String refresh_token) throws Exception {
+        Jwt decodedToken = jwtTokenUtils.checkValidRefreshToken(refresh_token);
+        String email = decodedToken.getSubject();
+        User user = userService.getUserDetailsFromRefreshToken(refresh_token, email);
+        Token token = tokenService.refreshToken(refresh_token, email);
 
+        LoginResponse loginResponse = fromUserAndToken(user, token);
+
+        ResponseCookie resCookies = ResponseCookie
+                .from("refresh_token", token.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(expirationRefreshToken)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, resCookies.toString())
+                .body(ResponseObject.builder()
+                        .message(localizationUtils.getLocalizedMessage(MessageKeys.REFRESH_TOKEN_SUCCESSFULLY))
+                        .data(loginResponse)
+                        .status(HttpStatus.OK)
+                        .build());
+    }
+
+    private LoginResponse fromUserAndToken(User user, Token token) {
+        return LoginResponse.builder()
+                .token(token.getToken())
+                .tokenType(token.getTokenType())
+                .refreshToken(token.getRefreshToken())
+                .username(user.getUsername())
+                .role(user.getAuthorities().toString())
+                .id(user.getId())
+                .build();
+    }
 }

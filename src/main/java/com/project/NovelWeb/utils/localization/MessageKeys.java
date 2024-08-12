@@ -13,4 +13,6 @@ public class MessageKeys {
     public static final String EMAIL_DOES_NOT_EXISTS = "user.login.email_does_not_exists";
 
     public static final String EMAIL_ALREADY_EXISTS = "user.register.email_already_exists";
+
+    public static final String REFRESH_TOKEN_SUCCESSFULLY = "user.auth.refresh_token_successfully";
 }

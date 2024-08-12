@@ -15,7 +15,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.UUID;
 
-public class FileUploadUtil {
+public class FileUtils {
 
     public static boolean isImageFile(MultipartFile file) {
         String contentType = file.getContentType();

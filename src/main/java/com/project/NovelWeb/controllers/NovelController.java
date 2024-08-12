@@ -10,6 +10,8 @@ import com.project.NovelWeb.responses.novel.NovelResponse;
 import com.project.NovelWeb.services.NovelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +19,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,16 +31,16 @@ import java.util.List;
 @RequestMapping("${api.prefix}/novels")
 public class NovelController {
     private final NovelService novelService;
+    private static final Logger logger = LoggerFactory.getLogger(NovelController.class);
     @PostMapping("")
     @Transactional
     public ResponseEntity<NovelResponse> createNovel(
             @Valid @RequestBody NovelDTO novelDTO) throws Exception {
-        NovelResponse newNovel = novelService.  createNovel(novelDTO);
+        NovelResponse newNovel = novelService.createNovel(novelDTO);
         return ResponseEntity.ok(newNovel);
     }
 
     @PostMapping("/upload/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_POSTER')")
     public ResponseEntity<NovelResponse> updateNovelImage(
             @PathVariable("id") Long novelId,
             @ModelAttribute("file") MultipartFile file
@@ -54,30 +55,30 @@ public class NovelController {
     @GetMapping("/all")
     public ResponseEntity<NovelListResponse> getAllNovels(
             @RequestParam(defaultValue = "0")     int page,
-            @RequestParam(defaultValue = "10")    int limit
+            @RequestParam(defaultValue = "10")    int size
     ) {
         PageRequest pageRequest = PageRequest.of(
-                page, limit,
-                Sort.by("id").descending());
+                page, size,
+                Sort.by("updatedAt").descending());
 
         Page<NovelResponse> novelResponsePage = novelService.getAllNovels(pageRequest);
-        List<NovelResponse> novelResponseList = novelResponsePage.getContent();
         return ResponseEntity.ok(NovelListResponse.builder()
                         .totalPages(novelResponsePage.getTotalPages())
-                        .novelResponseList(novelResponseList)
+                        .novelResponseList(novelResponsePage.getContent())
                         .build());
     }
 
     @GetMapping("")
     public ResponseEntity<NovelListResponse> searchNovel(
             @RequestParam(defaultValue = "0")       int page,
-            @RequestParam(defaultValue = "10")      int limit,
-            @RequestParam(defaultValue = "")        String keyword,
+            @RequestParam(defaultValue = "10")      int size,
+            @RequestParam(defaultValue = "")        String name,
             @RequestParam(defaultValue = "", name = "content_type_id")       List<Long> contentTypeId
     ) {
-//        int totalPages = 0;
-        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("id").ascending());
-        Page<NovelResponse> novelResponses = novelService.SearchNovel(keyword, contentTypeId, pageRequest);
+        logger.info(String.format("keyword = %s, page = %d, limit = %d",
+                name, page, size));
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("updatedAt").descending());
+        Page<NovelResponse> novelResponses = novelService.SearchNovel(name, contentTypeId, pageRequest);
         return ResponseEntity.ok(NovelListResponse.builder()
                 .totalPages(novelResponses.getTotalPages())
                 .novelResponseList(novelResponses.getContent())
@@ -88,8 +89,8 @@ public class NovelController {
     public ResponseEntity<NovelListResponse> getNovelsByStatus(
             @PathVariable("status") String status,
             @RequestParam(defaultValue = "0")       int page,
-            @RequestParam(defaultValue = "10")      int limit) throws Exception {
-        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("id").ascending());
+            @RequestParam(defaultValue = "10")      int size) throws Exception {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("updatedAt").descending());
         Page<NovelResponse> novelResponses = novelService.findAllByStatus(status, pageRequest);
         return ResponseEntity.ok(NovelListResponse.builder()
                 .totalPages(novelResponses.getTotalPages())

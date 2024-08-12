@@ -16,7 +16,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${api.prefix}/contentType")
+@RequestMapping("${api.prefix}/contentTypes")
 public class ContentTypeController {
     private final ContentTypeServiceImp contentTypeServiceImp;
 

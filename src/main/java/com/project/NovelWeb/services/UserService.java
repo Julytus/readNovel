@@ -22,7 +22,7 @@ public interface UserService {
 
     User getUserDetailsFromToken(String token) throws ExpiredTokenException, DataNotFoundException;
 
-    User getUserDetailsFromRefreshToken(String refreshToken) throws Exception;
+    User getUserDetailsFromRefreshToken(String refreshToken, String email) throws Exception;
     void resetPassword(Long userId, String newPassword) throws DataNotFoundException;
     Page<User> searchUser(String keyword, Pageable pageable);
     User getUserByEmai(String email);

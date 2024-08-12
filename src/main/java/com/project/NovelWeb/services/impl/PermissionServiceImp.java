@@ -8,7 +8,6 @@ import com.project.NovelWeb.repositories.PermissionRepository;
 import com.project.NovelWeb.repositories.RoleRepository;
 import com.project.NovelWeb.services.PermissionService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 public class PermissionServiceImp implements PermissionService {
     private final PermissionRepository permissionRepository;
     private final RoleRepository roleRepository;
-    private final ModelMapper modelMapper;
 
     @Override
     public boolean isPermissionExist(PermissionDTO p) {

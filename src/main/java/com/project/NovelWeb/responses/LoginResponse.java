@@ -1,8 +1,7 @@
 package com.project.NovelWeb.responses;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-
-import java.util.List;
 
 @Data
 @Getter
@@ -11,9 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginResponse {
-    @JsonProperty("message")
-    private String message;
-
     @JsonProperty("token")
     private String token;
 
@@ -24,5 +20,5 @@ public class LoginResponse {
     private Long id;
     private String username;
 
-    private List<String> roles;
+    private String role;
 }

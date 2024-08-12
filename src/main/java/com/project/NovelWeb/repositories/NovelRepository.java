@@ -14,7 +14,9 @@ import java.util.Optional;
 
 
 @Repository
-public interface NovelRepository extends JpaRepository<Novel, Long> {
+public interface NovelRepository extends JpaRepository<Novel, Long>
+//        , JpaSpecificationExecutor<Novel>
+{
     //chỉ tìm được novel có 1 contentType
 //    @Query("SELECT n FROM Novel n WHERE " +
 //            "(:contentTypeId IS NULL OR :contentTypeId = '' " +

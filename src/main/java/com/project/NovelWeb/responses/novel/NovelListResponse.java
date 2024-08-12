@@ -10,6 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class NovelListResponse {
-    private List<NovelResponse> novelResponseList;
     private int totalPages;
+    private List<NovelResponse> novelResponseList;
 }
